@@ -30,7 +30,7 @@ class DiscountController extends Controller
         } else {
             $id_lokasi = $request->session()->get('id_lokasi');
             $tgl1 = date('y-m-01');
-            $tgl2 = date('y-m-d');
+            $tgl2 = date('y-m-t');
             $data = [
                 'title' => 'Discount',
                 'logout' => $request->session()->get('logout'),
