@@ -605,6 +605,17 @@ class LaporanController extends Controller
     function cek_invoice(Request $r)
     {
         $loc = $r->session()->get('id_lokasi');
+        $invoice_format =  DB::select("SELECT a.tgl, a.no_nota, b.total_bayar as total_orderan, b.dp, a.id_akun_pembayaran, a.nominal, c.nm_akun
+        FROM pembayaran as a 
+        left join akun_pembayaran as c on c.id_akun_pembayaran = a.id_akun_pembayaran
+        left join tb_transaksi as b on b.no_order = a.no_nota
+        where a.id_lokasi = '$loc' and a.tgl BETWEEN '$r->tgl1' and '$r->tgl2';");
+
+        $lokasi = $loc == '1' ? 'TAKEMORI' : 'SOONDOBU';
+
+        $response = Http::get("https://majoo.ptagafood.com/api/LaporanHarian/$lokasi/$r->tgl1/$r->tgl2");
+        $majo = $response->object();
+
         $data = [
             'invoice' => DB::select("SELECT a.tgl, a.id_akun_pembayaran, a.no_nota, b.nm_akun, c.nm_klasifikasi, a.nominal, d.id_distribusi, d.id_lokasi, a.pengirim, a.diskon_bank
             FROM pembayaran as a
@@ -617,7 +628,14 @@ class LaporanController extends Controller
             ) as d on d.no_order2 = a.no_nota
             where a.tgl BETWEEN '$r->tgl1' and '$r->tgl2' and a.id_lokasi = '$loc' ;"),
             'tgl1' => $r->tgl1,
-            'tgl2' => $r->tgl2
+            'tgl2' => $r->tgl2,
+            'majo' => $majo,
+            'invoice_format' => $invoice_format,
+            'pembayaran' => DB::select("SELECT *
+            FROM akun_pembayaran as a
+            group by a.nm_akun
+            ORDER by a.nm_akun ASC;
+            ")
         ];
 
         return view('laporan.cek_invoice', $data);
@@ -647,6 +665,16 @@ class LaporanController extends Controller
     function excel_cek_invoice(Request $r)
     {
         $loc = $r->session()->get('id_lokasi');
+        $invoice_format =  DB::select("SELECT a.tgl, a.no_nota, b.total_bayar as total_orderan, b.dp, a.id_akun_pembayaran, a.nominal, c.nm_akun
+        FROM pembayaran as a 
+        left join akun_pembayaran as c on c.id_akun_pembayaran = a.id_akun_pembayaran
+        left join tb_transaksi as b on b.no_order = a.no_nota
+        where a.id_lokasi = '$loc' and a.tgl BETWEEN '$r->tgl1' and '$r->tgl2';");
+
+        $lokasi = $loc == '1' ? 'TAKEMORI' : 'SOONDOBU';
+
+        $response = Http::get("https://majoo.ptagafood.com/api/LaporanHarian/$lokasi/$r->tgl1/$r->tgl2");
+        $majo = $response->object();
         $data = [
             'invoice' => DB::select("SELECT a.tgl, a.id_akun_pembayaran, a.no_nota, b.nm_akun, c.nm_klasifikasi, a.nominal, d.id_distribusi, d.id_lokasi,  a.diskon_bank
             FROM pembayaran as a
@@ -660,7 +688,14 @@ class LaporanController extends Controller
             where a.tgl BETWEEN '$r->tgl1' and '$r->tgl2' and a.id_lokasi = '$loc';"),
             'tgl1' => $r->tgl1,
             'tgl2' => $r->tgl2,
-            'lokasi' => $loc == '1' ? 'TAKEMORI' : 'SOONDOBU'
+            'majo' => $majo,
+            'lokasi' => $loc == '1' ? 'TAKEMORI' : 'SOONDOBU',
+            'invoice_format' => $invoice_format,
+            'pembayaran' => DB::select("SELECT *
+            FROM akun_pembayaran as a
+            group by a.nm_akun
+            ORDER by a.nm_akun ASC;
+            ")
         ];
 
         return view('laporan.excel_cek_invoice', $data);

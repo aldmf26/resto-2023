@@ -30,51 +30,65 @@ header("Content-Disposition: attachment; filename=$file");
             <table width="100%" border="1">
                 <thead>
                     <tr>
-                        <th class="text-center">#</th>
-                        <th class="text-center">Tanggal</th>
-                        <th class="text-center">Lokasi</th>
-                        <th class="text-center">Nama Akun</th>
-                        <th class="text-center">Jenis Pembayaran</th>
-                        <th class="text-center">CFM</th>
-                        <th class="text-center">Total Rp</th>
+                        <th style="font-size: 11px">#</th>
+                        <th style="font-size: 11px">Tanggal</th>
+                        <th style="font-size: 11px">No Nota</th>
+                        <th style="font-size: 11px">Ttl Rp</th>
+                        <th style="font-size: 11px">Dp</th>
+                        @foreach ($pembayaran as $p)
+                            <th style="font-size: 11px">
+                                {{ $p->nm_akun }}
+                            </th>
+                        @endforeach
                     </tr>
                 </thead>
                 <tbody>
                     @php
-                        $total = 0;
-                        $total_diskon = 0;
+                        $rowNumber = 1;
                     @endphp
-                    @foreach ($invoice as $no => $i)
-                        @php
-                            $lokasi = $i->id_lokasi == '1' ? 'TAKEMORI' : 'SOONDOBU';
-                        @endphp
+                    @foreach ($invoice_format as $no => $i)
                         <tr>
-                            <td>{{ $no + 1 }}</td>
+                            <td>{{ $rowNumber }}</td>
                             <td>{{ date('d-m-Y', strtotime($i->tgl)) }}</td>
-                            <td>{{ $lokasi }}</td>
-                            <td>PENJUALAN {{ $i->id_distribusi == '1' ? $lokasi : 'GOJEK' }}</td>
-                            <td>{{ $i->nm_akun . ' ' . $i->nm_klasifikasi }}</td>
                             <td>{{ $i->no_nota }}</td>
-                            <td align="right">{{ number_format($i->nominal, 0) }}</td>
+                            <td align="right">{{ number_format($i->total_orderan, 0) }}</td>
+                            <td align="right">{{ number_format($i->dp, 0) }}</td>
+                            @foreach ($pembayaran as $p)
+                                <td align="right">
+                                    @if ($p->nm_akun == $i->nm_akun)
+                                        {{ number_format($i->nominal, 0) }}
+                                    @else
+                                        0
+                                    @endif
+                                </td>
+                            @endforeach
                         </tr>
                         @php
-                            $total += $i->nominal;
-                            $total_diskon += $i->diskon_bank;
+                            $rowNumber++;
+                        @endphp
+                    @endforeach
+                    @foreach ($majo as $no => $i)
+                        <tr>
+                            <td>{{ $rowNumber }}</td>
+                            <td>{{ date('d-m-Y', strtotime($i->tgl)) }}</td>
+                            <td>{{ $i->no_nota }}</td>
+                            <td align="right">{{ number_format($i->bayar, 0) }}</td>
+                            <td align="right">0</td>
+                            @foreach ($pembayaran as $p)
+                                <td align="right">
+                                    @if ($p->nm_akun == $i->nm_akun)
+                                        {{ number_format($i->nominal, 0) }}
+                                    @else
+                                        0
+                                    @endif
+                                </td>
+                            @endforeach
+                        </tr>
+                        @php
+                            $rowNumber++;
                         @endphp
                     @endforeach
                 </tbody>
-                <tfoot>
-                    <tr>
-                        <td style="font-weight: bold">Total</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td style="font-weight: bold">{{ number_format($total_diskon, 0) }}</td>
-                        <td style="font-weight: bold">{{ number_format($total, 0) }}</td>
-                    </tr>
-                </tfoot>
             </table>
         </div>
     </div>
