@@ -161,7 +161,7 @@ class Export_gaji_server extends Controller
         $sheet->getStyle('U' . $col + 3)->getFont()->setBold(true);
         $sheet->getStyle('W' . $col + 3)->getFont()->setBold(true);
         $sheet
-            ->setCellValue('U' . $col + 3, 'Kom/Jam' . $sc_dibagi . ' - ' . $kom_majo . ' - ' . $kom_bagi . ' - ' . $total_jam)
+            ->setCellValue('U' . $col + 3, 'Kom/Jam')
             ->setCellValue('W' . $col + 3, ($sc_dibagi + $kom_majo + $kom_bagi) / $total_jam);
         $kom_jam = ($sc_dibagi + $kom_majo + $kom_bagi) / $total_jam;
 

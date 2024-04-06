@@ -1302,6 +1302,17 @@ class Point_masak extends Controller
         $persen = DB::table('persentse_komisi')->where('nama_persentase', 'Server')->where('id_lokasi', 1)->first();
 
         $total_service = ((($service_charge_sdb->total * 0.07) / 7) * $persen->jumlah_persen) + ((($service_charge_tkm->total * 0.07) / 7) * $persen->jumlah_persen);
+        $total_jam = 0;
+        $o = 1;
+        foreach ($gaji_server as $s) {
+            if ($s->point != 'Y') {
+                continue;
+            } else {
+                $total_jam += (($s->m + $s->e) * 8) + ($s->sp * 13);
+                $orang = $o++;
+            }
+        }
+
         $sc_dibagi = ($total_service / $jumlah_orang->jumlah) * $orang;
 
         $komisiMajo = Http::get("https://majoo.ptagafood.com/api/kom_majo_server/$tgl1/$tgl2");
@@ -1320,16 +1331,7 @@ class Point_masak extends Controller
             $kom_bagi += $k->komisi_bagi;
             $col++;
         }
-        $total_jam = 0;
-        $o = 1;
-        foreach ($gaji_server as $s) {
-            if ($s->point != 'Y') {
-                continue;
-            } else {
-                $total_jam += (($s->m + $s->e) * 8) + ($s->sp * 13);
-                $orang = $o++;
-            }
-        }
+
 
 
         $kom_jam = ($sc_dibagi + $kom_majo + $kom_bagi) / $total_jam;
