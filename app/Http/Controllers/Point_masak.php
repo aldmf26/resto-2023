@@ -1103,6 +1103,21 @@ class Point_masak extends Controller
 
     public function export_gaji_all(Request $r)
     {
+
+        $style = [
+            'font' => array(
+                'size' => 12,
+            ),
+            'borders' => [
+                'alignment' => [
+                    'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                    'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                ],
+                'allBorders' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN
+                ],
+            ],
+        ];
         $id_lokasi = $r->id_lokasi ?? 1;
 
         $tgl1 = $r->tgl1 ?? date('Y-m-01');
@@ -1221,21 +1236,48 @@ class Point_masak extends Controller
             // $i++;
         }
 
+
+        $batas = $absenTkm;
+        $batasA = count($batas) + 2;
+        $sheet->getStyle('A2:T' . $batasA)->applyFromArray($style);
+        $rowSdba = $batasA;
+        $rSdba = $rowSdba;
+        $kolomSdba = $rSdba;
+        $ttlAbsenSdb = 0;
+        foreach ($absenSdb as $k) {
+            $ttlAbsenTkm = $k->qty_m + $k->qty_e + $k->qty_sp;
+            $totalKerja = new DateTime($k->tgl_masuk);
+            $today = new DateTime();
+            $tKerja = $today->diff($totalKerja);
+            $spreadsheet->setActiveSheetIndex(0);
+            $sheet->setCellValue('A' . $kolomTkm, $tKerja->y . ' Tahun ' . $tKerja->m . ' Bulan');
+            $sheet->setCellValue('B' . $kolomTkm, 'Takemori');
+            $sheet->setCellValue('C' . $kolomTkm, $k->nama);
+            $sheet->setCellValue('D' . $kolomTkm, $k->nm_posisi);
+            $sheet->setCellValue('E' . $kolomTkm, $k->qty_m);
+            $sheet->setCellValue('F' . $kolomTkm, $k->qty_e);
+            $sheet->setCellValue('G' . $kolomTkm, $k->qty_sp);
+            $sheet->setCellValue('H' . $kolomTkm, $ttlAbsenTkm);
+            $sheet->setCellValue('I' . $kolomTkm, 'Null');
+            $sheet->setCellValue('J' . $kolomTkm, $k->rp_m);
+            $sheet->setCellValue('K' . $kolomTkm, $k->rp_e);
+            $sheet->setCellValue('L' . $kolomTkm, $k->rp_sp);
+            $gaji = ($k->rp_m * $k->qty_m) + ($k->rp_e * $k->qty_e) + ($k->rp_sp * $k->qty_sp);
+            $sheet->setCellValue('M' . $kolomTkm, $gaji);
+            $sheet->setCellValue('N' . $kolomTkm, $k->point == 'Y' ? 'Ya' : 'Tidak');
+            $kom1 =  round(($k->point_berhasil / $point) * $kom, 0);
+            $sheet->setCellValue('O' . $kolomTkm, $kom1);
+            $sheet->setCellValue('P' . $kolomTkm, $gaji + $kom1);
+            $sheet->setCellValue('Q' . $kolomTkm, '0');
+            $sheet->setCellValue('R' . $kolomTkm, $k->denda);
+            $sheet->setCellValue('S' . $kolomTkm, $k->kasbon);
+            $sheet->setCellValue('T' . $kolomTkm, $gaji + $kom1 - $k->denda - $k->kasbon);
+
+            $kolomSdba++;
+        }
+
         $writer = new Xlsx($spreadsheet);
-        $style = [
-            'font' => array(
-                'size' => 12,
-            ),
-            'borders' => [
-                'alignment' => [
-                    'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-                    'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
-                ],
-                'allBorders' => [
-                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN
-                ],
-            ],
-        ];
+
         $style_header = array(
             'font' => array(
                 'size' => 12,
@@ -1251,7 +1293,7 @@ class Point_masak extends Controller
                 'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
             ),
         );
-        $batas = $kolomTkm - 1;
+        $batas = $kolomSdba - 1;
         $sheet->getStyle('A1:T1')->applyFromArray($style_header);
         $sheet->getStyle('A2:T' . $batas)->applyFromArray($style);
 
