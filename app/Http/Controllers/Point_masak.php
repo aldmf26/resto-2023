@@ -1338,7 +1338,7 @@ class Point_masak extends Controller
         $kolomserver = $kolomSdba;
         foreach ($gaji_server as $g) {
             $sheet->setCellValue('A' . $kolomserver, $tKerja->y . ' Tahun ' . $tKerja->m . ' Bulan');
-            $sheet->setCellValue('B' . $kolomserver, $sc_dibagi . ' - ' . $kom_majo . ' - ' . $kom_bagi . ' - ' . $total_jam);
+            $sheet->setCellValue('B' . $kolomserver, '');
             $sheet->setCellValue('C' . $kolomserver, strtolower($g->nama));
             $sheet->setCellValue('D' . $kolomserver, strtolower($g->nm_posisi));
             $sheet->setCellValue('E' . $kolomserver, $g->m);
