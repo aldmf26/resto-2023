@@ -1108,6 +1108,47 @@ class Point_masak extends Controller
         $tgl1 = $r->tgl1 ?? date('Y-m-01');
         $tgl2 = $r->tgl2 ?? date('Y-m-d');
 
+        $absenTkm = PointQuery::getAbsen(1, $tgl1, $tgl2);
+        $absenSdb = PointQuery::getAbsen(2, $tgl1, $tgl2);
+
+        $masakTkm = PointQuery::getMasak(1, $tgl1, $tgl2);
+        $masakSdb = PointQuery::getMasak(2, $tgl1, $tgl2);
+
+        $serviceTkm = PointQuery::getService(1, $tgl1, $tgl2);
+
+        $jumlah_orangTkm = DB::table('tb_jumlah_orang')->where('ket_karyawan', 'Kitchen')->where('id_lokasi', 1)->first();
+        $persenTkm = DB::table('persentse_komisi')->where('nama_persentase', 'Kitchen')->where('id_lokasi', 1)->first();
+
+        $serviceSdb = PointQuery::getService(2, $tgl1, $tgl2);
+
+        $jumlah_orangSdb = DB::table('tb_jumlah_orang')->where('ket_karyawan', 'Kitchen')->where('id_lokasi', 2)->first();
+        $persenSdb = DB::table('persentse_komisi')->where('nama_persentase', 'Kitchen')->where('id_lokasi', 2)->first();
+
+        // takemori
+        $l = 1;
+        $point = 0;
+        $point2 = 0;
+        foreach ($masakTkm as $m) {
+            $orang = $l++;
+            $point += $m->point_berhasil + $m->point_gagal;
+        }
+
+        $lSdb = 1;
+        $pointSdb = 0;
+        $point2Sdb = 0;
+        foreach ($masakSdb as $m) {
+            $orangSdb = $lSdb++;
+            $pointSdb += $m->point_berhasil + $m->point_gagal;
+        }
+
+        // takemori
+        $service_charge = $serviceTkm->total * 0.07;
+        $kom =  round((((($service_charge  / 7) * $persenTkm->jumlah_persen) / $jumlah_orangTkm->jumlah)  * $orang));
+
+        // soondobu
+        $service_chargeSdb = $serviceSdb->total * 0.07;
+        $komSdb =  round((((($service_chargeSdb  / 7) * $persenSdb->jumlah_persen) / $jumlah_orangSdb->jumlah)  * $orangSdb));
+
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->getStyle('A1:D4')
@@ -1144,10 +1185,43 @@ class Point_masak extends Controller
             ->setCellValue('S1', 'kasbon')
             ->setCellValue('T1', 'sisa gaji');
 
+        $kolomTkm = 2;
+        $i = 1;
+        $ttlAbsenTkm = 0;
+        foreach ($absenTkm as $k) {
+            $ttlAbsenTkm = $k->qty_m + $k->qty_e + $k->qty_sp;
+            $totalKerja = new DateTime($k->tgl_masuk);
+            $today = new DateTime();
+            $tKerja = $today->diff($totalKerja);
+            $spreadsheet->setActiveSheetIndex(0);
+            $sheet->setCellValue('A' . $kolomTkm, $tKerja->y . ' Tahun ' . $tKerja->m . ' Bulan');
+            $sheet->setCellValue('B' . $kolomTkm, 'Takemori');
+            $sheet->setCellValue('C' . $kolomTkm, $k->nama);
+            $sheet->setCellValue('D' . $kolomTkm, $k->nm_posisi);
+            $sheet->setCellValue('E' . $kolomTkm, $k->qty_m);
+            $sheet->setCellValue('F' . $kolomTkm, $k->qty_e);
+            $sheet->setCellValue('G' . $kolomTkm, $k->qty_sp);
+            $sheet->setCellValue('H' . $kolomTkm, $ttlAbsenTkm);
+            $sheet->setCellValue('I' . $kolomTkm, 'Null');
+            $sheet->setCellValue('J' . $kolomTkm, $k->rp_m);
+            $sheet->setCellValue('K' . $kolomTkm, $k->rp_e);
+            $sheet->setCellValue('L' . $kolomTkm, $k->rp_sp);
+            $gaji = ($k->rp_m * $k->qty_m) + ($k->rp_e * $k->qty_e) + ($k->rp_sp * $k->qty_sp);
+            $sheet->setCellValue('M' . $kolomTkm, $gaji);
+            $sheet->setCellValue('N' . $kolomTkm, $k->point == 'Y' ? 'Ya' : 'Tidak');
+            $kom1 =  round(($k->point_berhasil / $point) * $kom, 0);
+            $sheet->setCellValue('O' . $kolomTkm, $kom1);
+            $sheet->setCellValue('P' . $kolomTkm, $gaji + $kom1);
+            $sheet->setCellValue('Q' . $kolomTkm, '0');
+            $sheet->setCellValue('R' . $kolomTkm, $k->denda);
+            $sheet->setCellValue('S' . $kolomTkm, $k->kasbon);
+            $sheet->setCellValue('T' . $kolomTkm, $gaji + $kom1 - $k->denda - $k->kasbon);
+
+            $kolomTkm++;
+            // $i++;
+        }
         $kolom = 2;
         $no = 1;
-
-
         $writer = new Xlsx($spreadsheet);
         $style = [
             'borders' => [
@@ -1177,6 +1251,7 @@ class Point_masak extends Controller
         );
         $batas = $kolom - 1;
         $sheet->getStyle('A1:T1')->applyFromArray($style_header);
+        $sheet->getStyle('A2:T' . $batas)->applyFromArray($style);
 
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename="Gaji All.xlsx"');
