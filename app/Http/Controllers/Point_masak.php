@@ -13,6 +13,7 @@ use DateTime;
 use Illuminate\Support\Facades\Http;
 use GuzzleHttp\Client;
 use PointQuery;
+use Server;
 
 class Point_masak extends Controller
 {
@@ -1118,6 +1119,21 @@ class Point_masak extends Controller
                 ],
             ],
         ];
+        $style_header = array(
+            'font' => array(
+                'size' => 12,
+                'bold'  =>  true
+            ),
+            'borders' => array(
+                'allBorders' => array(
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                ),
+            ),
+            'alignment' => array(
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+            ),
+        );
         $id_lokasi = $r->id_lokasi ?? 1;
 
         $tgl1 = $r->tgl1 ?? date('Y-m-01');
@@ -1163,6 +1179,11 @@ class Point_masak extends Controller
         // soondobu
         $service_chargeSdb = $serviceSdb->total * 0.07;
         $komSdb =  round((((($service_chargeSdb  / 7) * $persenSdb->jumlah_persen) / $jumlah_orangSdb->jumlah)  * $orangSdb));
+
+
+        // gaji server 
+
+        $gaji_server = Server::gaji_server($tgl1, $tgl2);
 
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
@@ -1223,7 +1244,7 @@ class Point_masak extends Controller
             $sheet->setCellValue('L' . $kolomTkm, $k->rp_sp);
             $gaji = ($k->rp_m * $k->qty_m) + ($k->rp_e * $k->qty_e) + ($k->rp_sp * $k->qty_sp);
             $sheet->setCellValue('M' . $kolomTkm, $gaji);
-            $sheet->setCellValue('N' . $kolomTkm, $k->point == 'Y' ? 'Ya' : 'Tidak');
+            $sheet->setCellValue('N' . $kolomTkm, $k->point == 'Y' ? 'ya' : 'tidak');
             $kom1 =  round(($k->point_berhasil / $point) * $kom, 0);
             $sheet->setCellValue('O' . $kolomTkm, $kom1);
             $sheet->setCellValue('P' . $kolomTkm, $gaji + $kom1);
@@ -1243,7 +1264,6 @@ class Point_masak extends Controller
         $rowSdba = $batasA;
         $rSdba = $rowSdba;
         $kolomSdba = $rSdba;
-        $ttlAbsenSdb = 0;
         foreach ($absenSdb as $k) {
             $ttlAbsenTkm = $k->qty_m + $k->qty_e + $k->qty_sp;
             $totalKerja = new DateTime($k->tgl_masuk);
@@ -1264,7 +1284,7 @@ class Point_masak extends Controller
             $sheet->setCellValue('L' . $kolomSdba, $k->rp_sp);
             $gaji = ($k->rp_m * $k->qty_m) + ($k->rp_e * $k->qty_e) + ($k->rp_sp * $k->qty_sp);
             $sheet->setCellValue('M' . $kolomSdba, $gaji);
-            $sheet->setCellValue('N' . $kolomSdba, $k->point == 'Y' ? 'Ya' : 'Tidak');
+            $sheet->setCellValue('N' . $kolomSdba, $k->point == 'Y' ? 'ya' : 'tidak');
             $kom1 =  round(($k->point_berhasil / $point) * $kom, 0);
             $sheet->setCellValue('O' . $kolomSdba, $kom1);
             $sheet->setCellValue('P' . $kolomSdba, $gaji + $kom1);
@@ -1275,25 +1295,82 @@ class Point_masak extends Controller
 
             $kolomSdba++;
         }
+        $service_charge_sdb = PointQuery::getService(2, $tgl1, $tgl2);
+        $service_charge_tkm = PointQuery::getService(1, $tgl1, $tgl2);
+
+        $jumlah_orang = DB::table('tb_jumlah_orang')->where('ket_karyawan', 'Server')->where('id_lokasi', 1)->first();
+        $persen = DB::table('persentse_komisi')->where('nama_persentase', 'Server')->where('id_lokasi', 1)->first();
+
+        $total_service = ((($service_charge_sdb->total * 0.07) / 7) * $persen->jumlah_persen) + ((($service_charge_tkm->total * 0.07) / 7) * $persen->jumlah_persen);
+        $sc_dibagi = ($total_service / $jumlah_orang->jumlah) * $orang;
+
+        $komisiMajo = Http::get("https://majoo.ptagafood.com/api/kom_majo_server/$tgl1/$tgl2");
+        $laporanMajo = $komisiMajo['komisi'];
+        $col_majo = 8;
+        $kom_majo = 0;
+        foreach ($laporanMajo as $l) {
+            $kom_majo += $l['komisi_bagi'];
+            $sheet
+                ->setCellValue('U' . $col_majo, $l['lokasi'] == 'SOONDOBU' ? 'MAJO SDB' : 'MAJO TKM')
+                ->setCellValue('V' . $col_majo, $l['komisi'] . '%')
+                ->setCellValue('W' . $col_majo, $l['total'] * ($l['komisi'] / 100));
+            $col_majo++;
+        }
+
+        $komstk = Server::komstk($tgl1, $tgl2);
+        $col = $col_majo + 1;
+        $kom_bagi = 0;
+        foreach ($komstk as $k) {
+            $kom_bagi += $k->komisi_bagi;
+            $sheet->setCellValue('U' . $col, $k->lokasi == '2' ? 'STK SDB' : 'STK TKM');
+            $sheet->setCellValue('V' . $col, $k->komisi . '%');
+            $sheet->setCellValue('W' . $col, $k->total * ($k->komisi / 100));
+            $col++;
+        }
+        $total_jam = 0;
+        $o = 1;
+        foreach ($gaji_server as $s) {
+            if ($s->point != 'Y') {
+                continue;
+            } else {
+                $total_jam += (($s->m + $s->e) * 8) + ($s->sp * 13);
+                $orang = $o++;
+            }
+        }
+
+
+        $kom_jam = ($sc_dibagi + $kom_majo + $kom_bagi) / $total_jam;
+        $kolomserver = $kolomSdba;
+        foreach ($gaji_server as $g) {
+            $sheet->setCellValue('A' . $kolomserver, $tKerja->y . ' Tahun ' . $tKerja->m . ' Bulan');
+            $sheet->setCellValue('B' . $kolomserver, '');
+            $sheet->setCellValue('C' . $kolomserver, $g->nama);
+            $sheet->setCellValue('D' . $kolomserver, $g->nm_posisi);
+            $sheet->setCellValue('E' . $kolomserver, $g->m);
+            $sheet->setCellValue('F' . $kolomserver, $g->e);
+            $sheet->setCellValue('G' . $kolomserver, $g->sp);
+            $sheet->setCellValue('H' . $kolomserver, $g->m + $g->e + $g->sp);
+            $sheet->setCellValue('I' . $kolomserver, (($g->m + $g->e) * 8) + ($g->sp * 13));
+            $sheet->setCellValue('J' . $kolomserver, $g->rp_m);
+            $sheet->setCellValue('K' . $kolomserver, $g->rp_e);
+            $sheet->setCellValue('L' . $kolomserver, $g->rp_sp);
+            $sheet->setCellValue('M' . $kolomserver, ($g->rp_sp * $g->sp) +  (($g->m + $g->e) * $g->rp_e) + $g->g_bulanan);
+            $sheet->setCellValue('N' . $kolomserver, $g->point == 'Y' ? 'ya' : 'tidak');
+            $jam = (($g->m + $g->e) * 8) + ($g->sp * 13);
+            $kom_ser = $jam * $point * $kom_jam;
+            $gaji_h = ($g->rp_sp * $g->sp) +  (($g->m + $g->e) * $g->rp_e) + $g->g_bulanan;
+            $sheet->setCellValue('O' . $kolomserver, $kom_ser);
+            $sheet->setCellValue('P' . $kolomserver, $gaji_h + $kom_ser);
+            $sheet->setCellValue('Q' . $kolomserver, '0');
+            $sheet->setCellValue('R' . $kolomserver, $g->denda);
+            $sheet->setCellValue('S' . $kolomserver, $g->kasbon);
+            $sheet->setCellValue('T' . $kolomserver, $gaji_h + $kom_ser - $g->denda - $g->kasbon);
+
+            $kolomserver++;
+        }
 
         $writer = new Xlsx($spreadsheet);
-
-        $style_header = array(
-            'font' => array(
-                'size' => 12,
-                'bold'  =>  true
-            ),
-            'borders' => array(
-                'allBorders' => array(
-                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
-                ),
-            ),
-            'alignment' => array(
-                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
-            ),
-        );
-        $batas = $kolomSdba - 1;
+        $batas = $kolomserver - 1;
         $sheet->getStyle('A1:T1')->applyFromArray($style_header);
         $sheet->getStyle('A2:T' . $batas)->applyFromArray($style);
 
