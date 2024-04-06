@@ -1251,7 +1251,7 @@ class Point_masak extends Controller
             $tKerja = $today->diff($totalKerja);
             $spreadsheet->setActiveSheetIndex(0);
             $sheet->setCellValue('A' . $kolomSdba, $tKerja->y . ' Tahun ' . $tKerja->m . ' Bulan');
-            $sheet->setCellValue('B' . $kolomSdba, 'Takemori');
+            $sheet->setCellValue('B' . $kolomSdba, 'Soondobu');
             $sheet->setCellValue('C' . $kolomSdba, $k->nama);
             $sheet->setCellValue('D' . $kolomSdba, $k->nm_posisi);
             $sheet->setCellValue('E' . $kolomSdba, $k->qty_m);
