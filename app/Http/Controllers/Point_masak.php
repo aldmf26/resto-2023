@@ -1350,6 +1350,7 @@ class Point_masak extends Controller
             $sheet->setCellValue('M' . $kolomserver, ($g->rp_sp * $g->sp) +  (($g->m + $g->e) * $g->rp_e) + $g->g_bulanan);
             $sheet->setCellValue('N' . $kolomserver, $g->point == 'Y' ? 'ya' : 'tidak');
             $jam = (($g->m + $g->e) * 8) + ($g->sp * 13);
+            $point = $g->point == 'Y' ? '1' : '0';
             $kom_ser = $jam * $point * $kom_jam;
             $gaji_h = ($g->rp_sp * $g->sp) +  (($g->m + $g->e) * $g->rp_e) + $g->g_bulanan;
             $sheet->setCellValue('O' . $kolomserver, $kom_ser);
