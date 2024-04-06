@@ -1310,10 +1310,6 @@ class Point_masak extends Controller
         $kom_majo = 0;
         foreach ($laporanMajo as $l) {
             $kom_majo += $l['komisi_bagi'];
-            $sheet
-                ->setCellValue('U' . $col_majo, $l['lokasi'] == 'SOONDOBU' ? 'MAJO SDB' : 'MAJO TKM')
-                ->setCellValue('V' . $col_majo, $l['komisi'] . '%')
-                ->setCellValue('W' . $col_majo, $l['total'] * ($l['komisi'] / 100));
             $col_majo++;
         }
 
