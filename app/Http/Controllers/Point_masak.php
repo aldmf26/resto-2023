@@ -1120,7 +1120,7 @@ class Point_masak extends Controller
         $sheet->getColumnDimension('E')->setWidth(13);
         $sheet->getColumnDimension('F')->setWidth(13);
         // header text
-        $sheet->getStyle("A1")->getFont()->setBold(true);
+
 
         $sheet
             ->setCellValue('A1', 'lama bekerja')
@@ -1161,7 +1161,7 @@ class Point_masak extends Controller
             ],
         ];
         $batas = $kolom - 1;
-        $sheet->getStyle('B1:F' . $batas)->applyFromArray($style);
+        $sheet->getStyle('A1:T' . $batas)->applyFromArray($style);
 
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename="Gaji All.xlsx"');
