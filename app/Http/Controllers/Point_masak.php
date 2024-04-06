@@ -1238,7 +1238,8 @@ class Point_masak extends Controller
             $sheet->setCellValue('F' . $kolomTkm, $k->qty_e);
             $sheet->setCellValue('G' . $kolomTkm, $k->qty_sp);
             $sheet->setCellValue('H' . $kolomTkm, $ttlAbsenTkm);
-            $sheet->setCellValue('I' . $kolomTkm, 'Null');
+            $jam = (($k->qty_m + $k->qty_e) * 8) + ($k->qty_sp * 13);
+            $sheet->setCellValue('I' . $kolomTkm, $jam);
             $sheet->setCellValue('J' . $kolomTkm, $k->rp_m);
             $sheet->setCellValue('K' . $kolomTkm, $k->rp_e);
             $sheet->setCellValue('L' . $kolomTkm, $k->rp_sp);
