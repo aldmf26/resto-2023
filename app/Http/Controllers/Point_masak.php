@@ -1337,8 +1337,8 @@ class Point_masak extends Controller
         foreach ($gaji_server as $g) {
             $sheet->setCellValue('A' . $kolomserver, $tKerja->y . ' Tahun ' . $tKerja->m . ' Bulan');
             $sheet->setCellValue('B' . $kolomserver, '');
-            $sheet->setCellValue('C' . $kolomserver, $g->nama);
-            $sheet->setCellValue('D' . $kolomserver, $g->nm_posisi);
+            $sheet->setCellValue('C' . $kolomserver, strtolower($g->nama));
+            $sheet->setCellValue('D' . $kolomserver, strtolower($g->nm_posisi));
             $sheet->setCellValue('E' . $kolomserver, $g->m);
             $sheet->setCellValue('F' . $kolomserver, $g->e);
             $sheet->setCellValue('G' . $kolomserver, $g->sp);
