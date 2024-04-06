@@ -1220,8 +1220,7 @@ class Point_masak extends Controller
             $kolomTkm++;
             // $i++;
         }
-        $kolom = 2;
-        $no = 1;
+
         $writer = new Xlsx($spreadsheet);
         $style = [
             'font' => array(
@@ -1252,9 +1251,9 @@ class Point_masak extends Controller
                 'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
             ),
         );
-        $batas = $kolom - 1;
+        $batas = $kolomTkm - 1;
         $sheet->getStyle('A1:T1')->applyFromArray($style_header);
-        $sheet->getStyle('A2:T16')->applyFromArray($style);
+        $sheet->getStyle('A2:T' . $batas)->applyFromArray($style);
 
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename="Gaji All.xlsx"');
