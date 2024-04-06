@@ -399,9 +399,24 @@ class Point_masak extends Controller
                 ],
             ],
         ];
+        $style_header = array(
+            'font' => array(
+                'size' => 12,
+                'bold'  =>  true
+            ),
+            'borders' => array(
+                'allBorders' => array(
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                ),
+            ),
+            'alignment' => array(
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+            ),
+        );
         $batas = $masak;
         $batas = count($batas) + 1;
-        $sheet2->getStyle('A1:G' . $batas)->applyFromArray($style);
+        $sheet2->getStyle('A1:G1')->applyFromArray($style_header);
 
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename="POINT-TS.xlsx"');
