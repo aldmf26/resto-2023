@@ -1224,10 +1224,13 @@ class Point_masak extends Controller
         $no = 1;
         $writer = new Xlsx($spreadsheet);
         $style = [
+            'font' => array(
+                'size' => 12,
+            ),
             'borders' => [
                 'alignment' => [
                     'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-                    'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                    'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
                 ],
                 'allBorders' => [
                     'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN
