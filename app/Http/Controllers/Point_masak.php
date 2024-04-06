@@ -1278,14 +1278,15 @@ class Point_masak extends Controller
             $sheet->setCellValue('F' . $kolomSdba, $k->qty_e);
             $sheet->setCellValue('G' . $kolomSdba, $k->qty_sp);
             $sheet->setCellValue('H' . $kolomSdba, $ttlAbsenTkm);
-            $sheet->setCellValue('I' . $kolomSdba, 'Null');
+            $jam = (($k->qty_m + $k->qty_e) * 8) + ($k->qty_sp * 13);
+            $sheet->setCellValue('I' . $kolomSdba, $jam);
             $sheet->setCellValue('J' . $kolomSdba, $k->rp_m);
             $sheet->setCellValue('K' . $kolomSdba, $k->rp_e);
             $sheet->setCellValue('L' . $kolomSdba, $k->rp_sp);
             $gaji = ($k->rp_m * $k->qty_m) + ($k->rp_e * $k->qty_e) + ($k->rp_sp * $k->qty_sp);
             $sheet->setCellValue('M' . $kolomSdba, $gaji);
             $sheet->setCellValue('N' . $kolomSdba, $k->point == 'Y' ? 'ya' : 'tidak');
-            $kom1 =  round(($k->point_berhasil / $point) * $kom, 0);
+            $kom1 =  round(($k->point_berhasil / $pointSdb) * $komSdb, 0);
             $sheet->setCellValue('O' . $kolomSdba, $kom1);
             $sheet->setCellValue('P' . $kolomSdba, $gaji + $kom1);
             $sheet->setCellValue('Q' . $kolomSdba, '0');
