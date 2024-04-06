@@ -1318,9 +1318,6 @@ class Point_masak extends Controller
         $kom_bagi = 0;
         foreach ($komstk as $k) {
             $kom_bagi += $k->komisi_bagi;
-            $sheet->setCellValue('U' . $col, $k->lokasi == '2' ? 'STK SDB' : 'STK TKM');
-            $sheet->setCellValue('V' . $col, $k->komisi . '%');
-            $sheet->setCellValue('W' . $col, $k->total * ($k->komisi / 100));
             $col++;
         }
         $total_jam = 0;
