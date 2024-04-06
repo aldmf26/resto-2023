@@ -1254,7 +1254,7 @@ class Point_masak extends Controller
         );
         $batas = $kolom - 1;
         $sheet->getStyle('A1:T1')->applyFromArray($style_header);
-        $sheet->getStyle('A2:T' . $batas)->applyFromArray($style);
+        $sheet->getStyle('A2:T16')->applyFromArray($style);
 
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename="Gaji All.xlsx"');
