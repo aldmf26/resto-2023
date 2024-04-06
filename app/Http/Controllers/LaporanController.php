@@ -634,7 +634,7 @@ class LaporanController extends Controller
             'pembayaran' => DB::select("SELECT *
             FROM akun_pembayaran as a
             group by a.nm_akun
-            ORDER by a.nm_akun ASC;
+            ORDER BY CASE WHEN a.nm_akun = 'cash' THEN 0 ELSE 1 END, a.nm_akun ASC;;
             ")
         ];
 
@@ -694,7 +694,7 @@ class LaporanController extends Controller
             'pembayaran' => DB::select("SELECT *
             FROM akun_pembayaran as a
             group by a.nm_akun
-            ORDER by a.nm_akun ASC;
+            ORDER BY CASE WHEN a.nm_akun = 'cash' THEN 0 ELSE 1 END, a.nm_akun ASC;
             ")
         ];
 
