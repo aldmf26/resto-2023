@@ -36,9 +36,6 @@ class ProdukController extends Controller
                     SELECT b.id_produk,b.nm_produk, a.harga, SUM(a.jumlah) as kredit_penjualan 
                     FROM `tb_pembelian` as a
                     LEFT JOIN tb_produk as b ON a.id_produk = b.id_produk
-                    join (
-                        SELECT no_nota FROM tb_invoice GROUP BY no_nota
-                    ) c on c.no_nota = a.no_nota2
                     GROUP BY a.id_produk
                 )AS e ON e.id_produk = a.id_produk
                 
@@ -51,13 +48,13 @@ class ProdukController extends Controller
             return view("produk.index", $data);
         }
     }
-    
+
     public function stok_adm(Request $request)
     {
-         $data = [
-                  'title' => 'Gaji',
-                  'logout' => $request->session()->get('logout'),
-                  'produk_tkm' => DB::select("SELECT a.id_produk, a.komisi,  a.nm_produk, a.sku, a.harga, b.satuan , c.nm_kategori, a.id_lokasi, d.debit, d.kredit,e.kredit_penjualan
+        $data = [
+            'title' => 'Gaji',
+            'logout' => $request->session()->get('logout'),
+            'produk_tkm' => DB::select("SELECT a.id_produk, a.komisi,  a.nm_produk, a.sku, a.harga, b.satuan , c.nm_kategori, a.id_lokasi, d.debit, d.kredit,e.kredit_penjualan
                 FROM tb_produk AS a
                 LEFT JOIN tb_satuan_majo AS b ON b.id_satuan = a.id_satuan
                 LEFT JOIN tb_kategori_majo AS c ON c.id_kategori = a.id_kategori
@@ -75,8 +72,8 @@ class ProdukController extends Controller
                 )AS e ON e.id_produk = a.id_produk
                 
                 WHERE a.id_lokasi = '1'"),
-                
-                  'produk_sdb' => DB::select("SELECT a.id_produk, a.komisi,  a.nm_produk, a.sku, a.harga, b.satuan , c.nm_kategori, a.id_lokasi, d.debit, d.kredit,e.kredit_penjualan
+
+            'produk_sdb' => DB::select("SELECT a.id_produk, a.komisi,  a.nm_produk, a.sku, a.harga, b.satuan , c.nm_kategori, a.id_lokasi, d.debit, d.kredit,e.kredit_penjualan
                 FROM tb_produk AS a
                 LEFT JOIN tb_satuan_majo AS b ON b.id_satuan = a.id_satuan
                 LEFT JOIN tb_kategori_majo AS c ON c.id_kategori = a.id_kategori
@@ -94,8 +91,8 @@ class ProdukController extends Controller
                 )AS e ON e.id_produk = a.id_produk
                 
                 WHERE a.id_lokasi = '2'"),
-                ];
-        return view('produk.stk_adm', $data);  
+        ];
+        return view('produk.stk_adm', $data);
     }
 
     public function tbh_produk_majo(Request $request)
