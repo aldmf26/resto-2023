@@ -1339,6 +1339,11 @@ class Point_masak extends Controller
         $kom_jam = ($sc_dibagi + $kom_majo + $kom_bagi) / $total_jam;
         $kolomserver = $kolomSdba;
         foreach ($gaji_server as $g) {
+
+            $totalKerja = new DateTime($g->tgl_masuk);
+            $today = new DateTime();
+            $tKerja = $today->diff($totalKerja);
+
             $sheet->setCellValue('A' . $kolomserver, $tKerja->y . ' Tahun ' . $tKerja->m . ' Bulan');
             $sheet->setCellValue('B' . $kolomserver, '');
             $sheet->setCellValue('C' . $kolomserver, strtolower($g->nama));
