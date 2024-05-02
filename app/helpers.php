@@ -396,7 +396,7 @@ class Server
   public static function gaji_server($tgl1, $tgl2)
   {
     return DB::select("SELECT a.tgl_masuk, a.nama, sum(c.qty_m) as m, sum(c.qty_e) as e, sum(c.qty_sp) as sp, sum(c.qty_off) as off,  b.rp_e, b.rp_m, b.rp_sp, b.g_bulanan,
-   d.kasbon, e.denda, a.point, f.nm_posisi
+   d.kasbon, e.denda, a.point, f.nm_posisi, g.nominal_bonus
    FROM tb_karyawan as a 
    left join tb_gaji as b on b.id_karyawan =  a.id_karyawan
    left join tb_posisi as f on f.id_posisi =  a.id_posisi
@@ -421,6 +421,9 @@ class Server
    Left JOIN (
    SELECT e.nama , sum(e.nominal) as denda FROM tb_denda as e where e.tgl between '$tgl1' AND '$tgl2' group by e.nama
    ) as e on e.nama = a.nama
+   Left JOIN (
+   SELECT f.id_karyawan , sum(f.nominal) as nominal_bonus FROM bonus as f where f.tgl between '$tgl1' AND '$tgl2' group by f.id_karyawan
+   ) as g on g.id_karyawan = a.id_karyawan
    
    where a.id_status = 2
    group by a.id_karyawan;");

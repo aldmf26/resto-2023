@@ -1209,11 +1209,12 @@ class Point_masak extends Controller
             ->setCellValue('G1', 'gaji')
             ->setCellValue('H1', 'terima point')
             ->setCellValue('I1', 'komisi')
-            ->setCellValue('J1', 'ttl gaji + kom')
-            ->setCellValue('K1', 'tips')
-            ->setCellValue('L1', 'denda')
-            ->setCellValue('M1', 'kasbon')
-            ->setCellValue('N1', 'sisa gaji');
+            ->setCellValue('J1', 'bonus')
+            ->setCellValue('K1', 'ttl gaji + kom')
+            ->setCellValue('L1', 'tips')
+            ->setCellValue('M1', 'denda')
+            ->setCellValue('N1', 'kasbon')
+            ->setCellValue('O1', 'sisa gaji');
 
         $kolomTkm = 2;
         $i = 1;
@@ -1236,11 +1237,12 @@ class Point_masak extends Controller
             $sheet->setCellValue('H' . $kolomTkm, $k->point == 'Y' ? 'ya' : 'tidak');
             $kom1 =  round(($k->point_berhasil / $point) * $kom, 0);
             $sheet->setCellValue('I' . $kolomTkm, $kom1);
-            $sheet->setCellValue('J' . $kolomTkm, $gaji + $kom1);
-            $sheet->setCellValue('K' . $kolomTkm, '0');
-            $sheet->setCellValue('L' . $kolomTkm, $k->denda);
-            $sheet->setCellValue('M' . $kolomTkm, $k->kasbon);
-            $sheet->setCellValue('N' . $kolomTkm, $gaji + $kom1 - $k->denda - $k->kasbon);
+            $sheet->setCellValue('J' . $kolomTkm, $k->nominal_bonus);
+            $sheet->setCellValue('K' . $kolomTkm, $gaji + $kom1 + $k->nominal_bonus);
+            $sheet->setCellValue('L' . $kolomTkm, '0');
+            $sheet->setCellValue('M' . $kolomTkm, $k->denda);
+            $sheet->setCellValue('N' . $kolomTkm, $k->kasbon);
+            $sheet->setCellValue('O' . $kolomTkm, $gaji + $kom1 + $k->nominal_bonus - $k->denda - $k->kasbon);
 
             $kolomTkm++;
             // $i++;
@@ -1271,11 +1273,12 @@ class Point_masak extends Controller
             $sheet->setCellValue('H' . $kolomSdba, $k->point == 'Y' ? 'ya' : 'tidak');
             $kom1 =  round(($k->point_berhasil / $pointSdb) * $komSdb, 0);
             $sheet->setCellValue('I' . $kolomSdba, $kom1);
-            $sheet->setCellValue('J' . $kolomSdba, $gaji + $kom1);
-            $sheet->setCellValue('K' . $kolomSdba, '0');
-            $sheet->setCellValue('L' . $kolomSdba, $k->denda);
-            $sheet->setCellValue('M' . $kolomSdba, $k->kasbon);
-            $sheet->setCellValue('N' . $kolomSdba, $gaji + $kom1 - $k->denda - $k->kasbon);
+            $sheet->setCellValue('J' . $kolomSdba, $k->nominal_bonus);
+            $sheet->setCellValue('K' . $kolomSdba, $gaji + $kom1 + $k->nominal_bonus);
+            $sheet->setCellValue('L' . $kolomSdba, '0');
+            $sheet->setCellValue('M' . $kolomSdba, $k->denda);
+            $sheet->setCellValue('N' . $kolomSdba, $k->kasbon);
+            $sheet->setCellValue('O' . $kolomSdba, $gaji + $kom1 + $k->nominal_bonus - $k->denda - $k->kasbon);
 
             $kolomSdba++;
         }
@@ -1339,11 +1342,12 @@ class Point_masak extends Controller
             $kom_ser = $jam * $point * $kom_jam;
             $gaji_h = ($g->rp_sp * $g->sp) +  (($g->m + $g->e) * $g->rp_e) + $g->g_bulanan;
             $sheet->setCellValue('I' . $kolomserver, $kom_ser);
-            $sheet->setCellValue('J' . $kolomserver, $gaji_h + $kom_ser);
-            $sheet->setCellValue('K' . $kolomserver, '0');
-            $sheet->setCellValue('L' . $kolomserver, $g->denda);
-            $sheet->setCellValue('M' . $kolomserver, $g->kasbon);
-            $sheet->setCellValue('N' . $kolomserver, $gaji_h + $kom_ser - $g->denda - $g->kasbon);
+            $sheet->setCellValue('J' . $kolomserver, $g->nominal_bonus);
+            $sheet->setCellValue('K' . $kolomserver, $gaji_h + $kom_ser + $g->nominal_bonus);
+            $sheet->setCellValue('L' . $kolomserver, '0');
+            $sheet->setCellValue('M' . $kolomserver, $g->denda);
+            $sheet->setCellValue('N' . $kolomserver, $g->kasbon);
+            $sheet->setCellValue('O' . $kolomserver, $gaji_h + $kom_ser + $g->nominal_bonus - $g->denda - $g->kasbon);
 
             $kolomserver++;
         }
