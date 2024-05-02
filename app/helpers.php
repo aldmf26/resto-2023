@@ -228,7 +228,7 @@ class PointQuery
   public static function getAbsen($id_lokasi, $tgl1, $tgl2)
   {
     $lamaMenit = DB::table('tb_menit')->where('id_lokasi', $id_lokasi)->first();
-    return DB::select("SELECT x.kasbon,posisi.nm_posisi, y.denda, a.nama,a.tgl_masuk,a.point,b.rp_m, sum(l.qty_m) AS qty_m, sum(l.qty_e) AS qty_e, sum(l.qty_sp) AS qty_sp,e.point_gagal,f.point_berhasil, b.rp_e, b.rp_sp, y.nominal_bonus
+    return DB::select("SELECT x.kasbon,posisi.nm_posisi, y.denda, a.nama,a.tgl_masuk,a.point,b.rp_m, sum(l.qty_m) AS qty_m, sum(l.qty_e) AS qty_e, sum(l.qty_sp) AS qty_sp,e.point_gagal,f.point_berhasil, b.rp_e, b.rp_sp, z.nominal_bonus
         FROM tb_karyawan AS a
         left join tb_gaji AS b ON b.id_karyawan = a.id_karyawan
         JOIN tb_posisi as posisi ON a.id_posisi = posisi.id_posisi
@@ -259,7 +259,7 @@ class PointQuery
 
         Left JOIN (
         SELECT y.id_karyawan, sum(y.nominal) as nominal_bonus  FROM bonus as y where y.tgl between '$tgl1' AND '$tgl2' group by x.id_karyawan
-        ) as y on y.id_karyawan = a.id_karyawan
+        ) as z on z.id_karyawan = a.id_karyawan
         
         LEFT JOIN (
             SELECT koki, SUM(nilai_koki) as point_berhasil FROM view_point2  
