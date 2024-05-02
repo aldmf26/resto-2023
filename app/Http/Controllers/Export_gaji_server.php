@@ -104,18 +104,18 @@ class Export_gaji_server extends Controller
             ->setCellValue('T1', 'SISA GAJI')
 
 
-            ->setCellValue('U1', 'SC TKM')
-            ->setCellValue('W1', (($service_charge_tkm->total * 0.07) / 7) * $persen->jumlah_persen)
-            ->setCellValue('U2', 'SC SDB')
-            ->setCellValue('W2', (($service_charge_sdb->total * 0.07) / 7) * $persen->jumlah_persen)
-            ->setCellValue('U4', 'Total SC')
-            ->setCellValue('W4', $total_service)
-            ->setCellValue('U5', 'P')
-            ->setCellValue('W5', $jumlah_orang->jumlah)
-            ->setCellValue('U6', 'R')
-            ->setCellValue('W6', $orang)
-            ->setCellValue('U7', 'Sc Dibagi')
-            ->setCellValue('W7', ($total_service / $jumlah_orang->jumlah) * $orang);
+            ->setCellValue('V1', 'SC TKM')
+            ->setCellValue('X1', (($service_charge_tkm->total * 0.07) / 7) * $persen->jumlah_persen)
+            ->setCellValue('V2', 'SC SDB')
+            ->setCellValue('X2', (($service_charge_sdb->total * 0.07) / 7) * $persen->jumlah_persen)
+            ->setCellValue('V4', 'Total SC')
+            ->setCellValue('X4', $total_service)
+            ->setCellValue('V5', 'P')
+            ->setCellValue('X5', $jumlah_orang->jumlah)
+            ->setCellValue('V6', 'R')
+            ->setCellValue('X6', $orang)
+            ->setCellValue('V7', 'Sc Dibagi')
+            ->setCellValue('X7', ($total_service / $jumlah_orang->jumlah) * $orang);
         $sc_dibagi = ($total_service / $jumlah_orang->jumlah) * $orang;
 
         $col_majo = 8;
