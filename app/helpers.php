@@ -258,7 +258,7 @@ class PointQuery
         ) as x on x.nm_karyawan = a.nama
 
         Left JOIN (
-        SELECT y.id_karyawan, sum(y.nominal) as nominal_bonus  FROM bonus as y where y.tgl between '$tgl1' AND '$tgl2' group by x.id_karyawan
+        SELECT y.id_karyawan, sum(y.nominal) as nominal_bonus  FROM bonus as y where y.tgl between '$tgl1' AND '$tgl2' group by y.id_karyawan
         ) as z on z.id_karyawan = a.id_karyawan
         
         LEFT JOIN (
