@@ -1251,7 +1251,7 @@ class Point_masak extends Controller
 
         $batas = $absenTkm;
         $batasA = count($batas) + 2;
-        $sheet->getStyle('A2:N' . $batasA)->applyFromArray($style);
+        $sheet->getStyle('A2:O' . $batasA)->applyFromArray($style);
         $rowSdba = $batasA;
         $rSdba = $rowSdba;
         $kolomSdba = $rSdba;
@@ -1354,8 +1354,8 @@ class Point_masak extends Controller
 
         $writer = new Xlsx($spreadsheet);
         $batas = $kolomserver - 1;
-        $sheet->getStyle('A1:N1')->applyFromArray($style_header);
-        $sheet->getStyle('A2:N' . $batas)->applyFromArray($style);
+        $sheet->getStyle('A1:O1')->applyFromArray($style_header);
+        $sheet->getStyle('A2:O' . $batas)->applyFromArray($style);
 
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename="Gaji All.xlsx"');
