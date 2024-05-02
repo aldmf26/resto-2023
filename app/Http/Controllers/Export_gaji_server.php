@@ -96,11 +96,12 @@ class Export_gaji_server extends Controller
             ->setCellValue('L1', 'TTL Jam')
             ->setCellValue('M1', 'TOTAL GAJI')
             ->setCellValue('N1', 'Komisi , STK dan Majo')
-            ->setCellValue('O1', 'TOTAL KOM & GAJI')
-            ->setCellValue('P1', 'TIPS')
-            ->setCellValue('Q1', 'KASBON')
-            ->setCellValue('R1', 'DENDA')
-            ->setCellValue('S1', 'SISA GAJI')
+            ->setCellValue('O1', 'Bonus')
+            ->setCellValue('P1', 'TOTAL KOM & GAJI')
+            ->setCellValue('Q1', 'TIPS')
+            ->setCellValue('R1', 'KASBON')
+            ->setCellValue('S1', 'DENDA')
+            ->setCellValue('T1', 'SISA GAJI')
 
 
             ->setCellValue('U1', 'SC TKM')
@@ -173,12 +174,14 @@ class Export_gaji_server extends Controller
         $ttl_kom = 0;
         $ttl_kasbon = 0;
         $ttl_denda = 0;
+        $ttl_bonus = 0;
         foreach ($gaji_server as $g) {
             $point = $g->point == 'Y' ? '1' : '0';
             $ttl_gaji += ($g->rp_sp * $g->sp) +  (($g->m + $g->e) * $g->rp_e) + $g->g_bulanan;
             $ttl_kom += ((($g->m + $g->e) * 8) + ($g->sp * 13)) * $point * $kom_jam;
             $ttl_kasbon += $g->kasbon;
             $ttl_denda += $g->denda;
+            $ttl_bonus += $g->nominal_bonus;
 
             $totalKerja = new DateTime($g->tgl_masuk);
             $today = new DateTime();
@@ -203,11 +206,12 @@ class Export_gaji_server extends Controller
             $gaji_h = ($g->rp_sp * $g->sp) +  (($g->m + $g->e) * $g->rp_e) + $g->g_bulanan;
             $sheet->setCellValue('N' . $kolom, $jam * $point * $kom_jam);
             $kom_ser = $jam * $point * $kom_jam;
-            $sheet->setCellValue('O' . $kolom, $kom_ser + $gaji_h);
-            $sheet->setCellValue('P' . $kolom, '');
-            $sheet->setCellValue('Q' . $kolom, $g->kasbon);
-            $sheet->setCellValue('R' . $kolom, $g->denda);
-            $sheet->setCellValue('S' . $kolom, $kom_ser + $gaji_h - $g->kasbon - $g->denda);
+            $sheet->setCellValue('O' . $kolom, $g->nominal_bonus);
+            $sheet->setCellValue('P' . $kolom, $kom_ser + $gaji_h + $g->nominal_bonus);
+            $sheet->setCellValue('Q' . $kolom, '');
+            $sheet->setCellValue('R' . $kolom, $g->kasbon);
+            $sheet->setCellValue('S' . $kolom, $g->denda);
+            $sheet->setCellValue('T' . $kolom, $kom_ser + $gaji_h + $g->nominal_bonus - $g->kasbon - $g->denda);
             $kolom++;
         }
         $sheet->mergeCells('A' . $kolom . ':' . 'L' . $kolom);
@@ -215,11 +219,12 @@ class Export_gaji_server extends Controller
             ->setCellValue('A' . $kolom, 'TOTAL')
             ->setCellValue('M' . $kolom, $ttl_gaji)
             ->setCellValue('N' . $kolom, $ttl_kom)
-            ->setCellValue('O' . $kolom, $ttl_gaji + $ttl_kom)
-            ->setCellValue('P' . $kolom, '')
-            ->setCellValue('Q' . $kolom, $ttl_kasbon)
-            ->setCellValue('R' . $kolom, $ttl_denda)
-            ->setCellValue('S' . $kolom, $ttl_gaji + $ttl_kom - $ttl_kasbon - $ttl_denda);
+            ->setCellValue('O' . $kolom, $ttl_bonus)
+            ->setCellValue('P' . $kolom, $ttl_gaji + $ttl_kom + $ttl_bonus)
+            ->setCellValue('Q' . $kolom, '')
+            ->setCellValue('R' . $kolom, $ttl_kasbon)
+            ->setCellValue('S' . $kolom, $ttl_denda)
+            ->setCellValue('T' . $kolom, $ttl_gaji + $ttl_kom + $ttl_bonus - $ttl_kasbon - $ttl_denda);
 
 
 
@@ -240,8 +245,8 @@ class Export_gaji_server extends Controller
                 'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
             ),
         );
-        $sheet->getStyle('A1:S1')->applyFromArray($style_header);
-        $sheet->getStyle('A' . $kolom . ':' . 'S' . $kolom)->applyFromArray($style_header);
+        $sheet->getStyle('A1:T1')->applyFromArray($style_header);
+        $sheet->getStyle('A' . $kolom . ':' . 'T' . $kolom)->applyFromArray($style_header);
 
         $style = [
             'font' => array(

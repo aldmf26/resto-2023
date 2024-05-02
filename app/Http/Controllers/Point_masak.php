@@ -628,12 +628,13 @@ class Point_masak extends Controller
             ->setCellValue('K1', 'Rp SP')
             ->setCellValue('L1', 'Gaji')
             ->setCellValue('M1', 'Kom Point Masak')
-            ->setCellValue('N1', 'Total Kom & Gaji')
-            ->setCellValue('O1', 'Denda')
-            ->setCellValue('P1', 'Kasbon')
-            ->setCellValue('Q1', 'Sisa Gaji')
-            ->setCellValue('R1', 'Terima Point')
-            ->setCellValue('S1', 'Lama Kerja');
+            ->setCellValue('N1', 'Bonus')
+            ->setCellValue('O1', 'Total Kom & Gaji')
+            ->setCellValue('P1', 'Denda')
+            ->setCellValue('Q1', 'Kasbon')
+            ->setCellValue('R1', 'Sisa Gaji')
+            ->setCellValue('S1', 'Terima Point')
+            ->setCellValue('T1', 'Lama Kerja');
 
         $kolomTkm = 2;
         $i = 1;
@@ -659,18 +660,19 @@ class Point_masak extends Controller
             $kom1 =  round(($k->point_berhasil / $point) * $kom, 0);
             $sheet2->setCellValue('L' . $kolomTkm, $gaji);
             $sheet2->setCellValue('M' . $kolomTkm, $k->point == 'T' ? '0' : $kom1);
-            $sheet2->setCellValue('N' . $kolomTkm, $gaji + $kom1);
-            $sheet2->setCellValue('O' . $kolomTkm, $k->denda);
-            $sheet2->setCellValue('P' . $kolomTkm, $k->kasbon);
-            $sheet2->setCellValue('Q' . $kolomTkm, ($gaji + $kom1) - $k->denda - $k->kasbon);
-            $sheet2->setCellValue('R' . $kolomTkm, $k->point == 'Y' ? 'Ya' : 'Tidak');
-            $sheet2->setCellValue('S' . $kolomTkm, $tKerja->y . ' Tahun ' . $tKerja->m . ' Bulan');
+            $sheet2->setCellValue('N' . $kolomTkm, $k->nominal_bonus);
+            $sheet2->setCellValue('O' . $kolomTkm, $gaji + $kom1 + $k->nominal_bonus);
+            $sheet2->setCellValue('P' . $kolomTkm, $k->denda);
+            $sheet2->setCellValue('Q' . $kolomTkm, $k->kasbon);
+            $sheet2->setCellValue('R' . $kolomTkm, ($gaji + $kom1 + $k->nominal_bonus) - $k->denda - $k->kasbon);
+            $sheet2->setCellValue('S' . $kolomTkm, $k->point == 'Y' ? 'Ya' : 'Tidak');
+            $sheet2->setCellValue('T' . $kolomTkm, $tKerja->y . ' Tahun ' . $tKerja->m . ' Bulan');
             $kolomTkm++;
             // $i++;
         }
         $batas = $absenTkm;
         $batasA = count($batas) + 2;
-        $sheet2->getStyle('A2:S' . $batasA)->applyFromArray($style);
+        $sheet2->getStyle('A2:T' . $batasA)->applyFromArray($style);
         $rowSdba = $batasA;
         $rSdba = $rowSdba;
         $kolomSdba = $rSdba;
@@ -696,18 +698,19 @@ class Point_masak extends Controller
             $kom1 =  round(($k->point_berhasil / $pointSdb) * $komSdb, 0);
             $sheet2->setCellValue('L' . $kolomSdba, $gaji);
             $sheet2->setCellValue('M' . $kolomSdba, $k->point == 'T' ? '0' : $kom1);
-            $sheet2->setCellValue('N' . $kolomSdba, $gaji + $kom1);
-            $sheet2->setCellValue('O' . $kolomSdba, $k->denda);
-            $sheet2->setCellValue('P' . $kolomSdba, $k->kasbon);
-            $sheet2->setCellValue('Q' . $kolomSdba, ($gaji + $kom1) - $k->denda - $k->kasbon);
-            $sheet2->setCellValue('R' . $kolomSdba, $k->point == 'Y' ? 'Ya' : 'Tidak');
-            $sheet2->setCellValue('S' . $kolomSdba, $tKerja->y . ' Tahun ' . $tKerja->m . ' Bulan');
+            $sheet2->setCellValue('N' . $kolomSdba, $k->nominal_bonus);
+            $sheet2->setCellValue('O' . $kolomSdba, $gaji + $kom1 + $k->nominal_bonus);
+            $sheet2->setCellValue('P' . $kolomSdba, $k->denda);
+            $sheet2->setCellValue('Q' . $kolomSdba, $k->kasbon);
+            $sheet2->setCellValue('R' . $kolomSdba, ($gaji + $kom1 + $k->nominal_bonus) - $k->denda - $k->kasbon);
+            $sheet2->setCellValue('S' . $kolomSdba, $k->point == 'Y' ? 'Ya' : 'Tidak');
+            $sheet2->setCellValue('T' . $kolomSdba, $tKerja->y . ' Tahun ' . $tKerja->m . ' Bulan');
             $kolomSdba++;
         }
         $batasAwala = $rowSdba + 1;
         $batasSdba = $kolomSdba - 1;
 
-        $sheet2->getStyle('A' . $batasAwala . ':S' . $batasSdba)->applyFromArray($styleSdb);
+        $sheet2->getStyle('A' . $batasAwala . ':T' . $batasSdba)->applyFromArray($styleSdb);
 
         // SUMMARY VARIABEL
         $loc = 1;
