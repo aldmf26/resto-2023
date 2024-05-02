@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $title ?></title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.3/css/bootstrap.min.css"
         integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
         integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
@@ -43,7 +43,6 @@
                 margin: 20px;
             }
         }
-
     </style>
     <style>
         :root {
@@ -203,7 +202,6 @@
                 color: #777;
             }
         }
-
     </style>
     <style>
         .tex {
@@ -240,7 +238,6 @@
             background: -webkit-linear-gradient(to right, #115099, #26c726);
             background: linear-gradient(to right, #4d529c, #66d1a5);
         }
-
     </style>
 </head>
 
@@ -292,7 +289,8 @@
                         <a href="{{ route('loginSoondobu') }}">
                             <div class="card-body">
                                 <center>
-                                    <img src="{{ asset('assets') }}/menu/img/soondobu.jpg" width="60%" alt="">
+                                    <img src="{{ asset('assets') }}/menu/img/soondobu.jpg" width="60%"
+                                        alt="">
                                 </center>
                             </div>
                             <div class="card-footer">
