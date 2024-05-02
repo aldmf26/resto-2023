@@ -138,32 +138,32 @@ class Export_gaji_server extends Controller
         $kom_bagi = 0;
         foreach ($komstk as $k) {
             $kom_bagi += $k->komisi_bagi;
-            $sheet->setCellValue('U' . $col, $k->lokasi == '2' ? 'STK SDB' : 'STK TKM');
-            $sheet->setCellValue('V' . $col, $k->komisi . '%');
-            $sheet->setCellValue('W' . $col, $k->total * ($k->komisi / 100));
+            $sheet->setCellValue('V' . $col, $k->lokasi == '2' ? 'STK SDB' : 'STK TKM');
+            $sheet->setCellValue('W' . $col, $k->komisi . '%');
+            $sheet->setCellValue('X' . $col, $k->total * ($k->komisi / 100));
             $col++;
         }
-        $sheet->getStyle('U' . $col)->getFont()->setBold(true);
-        $sheet->getStyle('W' . $col)->getFont()->setBold(true);
+        $sheet->getStyle('V' . $col)->getFont()->setBold(true);
+        $sheet->getStyle('X' . $col)->getFont()->setBold(true);
         $sheet
-            ->setCellValue('U' . $col, 'STK TKM + SDB')
-            ->setCellValue('W' . $col, $kom_bagi);
+            ->setCellValue('V' . $col, 'STK TKM + SDB')
+            ->setCellValue('X' . $col, $kom_bagi);
 
-        $sheet->getStyle('U' . $col + 1)->getFont()->setBold(true);
-        $sheet->getStyle('W' . $col + 1)->getFont()->setBold(true);
+        $sheet->getStyle('V' . $col + 1)->getFont()->setBold(true);
+        $sheet->getStyle('X' . $col + 1)->getFont()->setBold(true);
         $sheet
-            ->setCellValue('U' . $col + 1, 'Total Komisi')
-            ->setCellValue('W' . $col + 1, $sc_dibagi + $kom_majo + $kom_bagi);
+            ->setCellValue('V' . $col + 1, 'Total Komisi')
+            ->setCellValue('X' . $col + 1, $sc_dibagi + $kom_majo + $kom_bagi);
 
         $sheet
-            ->setCellValue('U' . $col + 2, 'Jam Dibagi')
-            ->setCellValue('W' . $col + 2, $total_jam);
+            ->setCellValue('V' . $col + 2, 'Jam Dibagi')
+            ->setCellValue('X' . $col + 2, $total_jam);
 
-        $sheet->getStyle('U' . $col + 3)->getFont()->setBold(true);
-        $sheet->getStyle('W' . $col + 3)->getFont()->setBold(true);
+        $sheet->getStyle('V' . $col + 3)->getFont()->setBold(true);
+        $sheet->getStyle('X' . $col + 3)->getFont()->setBold(true);
         $sheet
-            ->setCellValue('U' . $col + 3, 'Kom/Jam')
-            ->setCellValue('W' . $col + 3, ($sc_dibagi + $kom_majo + $kom_bagi) / $total_jam);
+            ->setCellValue('V' . $col + 3, 'Kom/Jam')
+            ->setCellValue('X' . $col + 3, ($sc_dibagi + $kom_majo + $kom_bagi) / $total_jam);
         $kom_jam = ($sc_dibagi + $kom_majo + $kom_bagi) / $total_jam;
 
 
