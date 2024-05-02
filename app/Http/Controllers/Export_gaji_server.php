@@ -123,15 +123,15 @@ class Export_gaji_server extends Controller
         foreach ($laporanMajo as $l) {
             $kom_majo += $l['komisi_bagi'];
             $sheet
-                ->setCellValue('U' . $col_majo, $l['lokasi'] == 'SOONDOBU' ? 'MAJO SDB' : 'MAJO TKM')
-                ->setCellValue('V' . $col_majo, $l['komisi'] . '%')
-                ->setCellValue('W' . $col_majo, $l['total'] * ($l['komisi'] / 100));
+                ->setCellValue('V' . $col_majo, $l['lokasi'] == 'SOONDOBU' ? 'MAJO SDB' : 'MAJO TKM')
+                ->setCellValue('W' . $col_majo, $l['komisi'] . '%')
+                ->setCellValue('X' . $col_majo, $l['total'] * ($l['komisi'] / 100));
             $col_majo++;
         }
-        $sheet->getStyle('U' . $col_majo)->getFont()->setBold(true);
-        $sheet->getStyle('W' . $col_majo)->getFont()->setBold(true);
-        $sheet->setCellValue("U$col_majo", "MAJO TKM + SDB");
-        $sheet->setCellValue("W$col_majo", $kom_majo);
+        $sheet->getStyle('V' . $col_majo)->getFont()->setBold(true);
+        $sheet->getStyle('X' . $col_majo)->getFont()->setBold(true);
+        $sheet->setCellValue("V$col_majo", "MAJO TKM + SDB");
+        $sheet->setCellValue("X$col_majo", $kom_majo);
 
 
         $col = $col_majo + 1;
