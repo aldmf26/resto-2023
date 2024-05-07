@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Http;
 use GuzzleHttp\Client;
 use PointQuery;
 use Server;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class Point_masak extends Controller
 {
@@ -106,7 +107,12 @@ class Point_masak extends Controller
                 'service' => $total_not_gojek,
                 'jumlah_orang' => DB::table('tb_jumlah_orang')->where('ket_karyawan', 'Kitchen')->where('id_lokasi', $id_lokasi)->first(),
                 'persen' => DB::table('persentse_komisi')->where('nama_persentase', 'Kitchen')->where('id_lokasi', $id_lokasi)->first(),
+                'bulan' => DB::table('bulan')->get(),
                 'logout' => $r->session()->get('logout'),
+                'tahun' => DB::select("SELECT YEAR(a.tgl) as tahun
+                FROM tb_absen as a
+                group by YEAR(a.tgl)
+                ")
             ];
 
             return view('point_masak.point_kitchen', $data);
@@ -1107,6 +1113,19 @@ class Point_masak extends Controller
 
     public function export_gaji_all(Request $r)
     {
+        $bulan =  date('m', strtotime($r->tgl1));
+        $tahun =  date('Y', strtotime($r->tgl1));
+        $gaji = DB::table('gaji_fix')->where('bulan', $bulan)->where('tahun', $tahun)->first();
+
+        if (!empty($gaji->bulan)) {
+            $this->export_gaji_all3($r);
+        } else {
+            $this->export_gaji_all2($r);
+        }
+    }
+
+    private function export_gaji_all2(Request $r)
+    {
 
         $style = [
             'font' => array(
@@ -1366,5 +1385,192 @@ class Point_masak extends Controller
 
         $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
         $writer->save('php://output');
+    }
+
+    private function export_gaji_all3(Request $r)
+    {
+
+        $style = [
+            'font' => array(
+                'size' => 12,
+            ),
+            'borders' => [
+                'alignment' => [
+                    'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                    'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                ],
+                'allBorders' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN
+                ],
+            ],
+        ];
+        $style_header = array(
+            'font' => array(
+                'size' => 12,
+                'bold'  =>  true
+            ),
+            'borders' => array(
+                'allBorders' => array(
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                ),
+            ),
+            'alignment' => array(
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+            ),
+        );
+
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->getStyle('A1:D4')
+            ->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_TOP);
+        // lebar kolom
+        $sheet->getColumnDimension('A')->setWidth(15);
+        $sheet->getColumnDimension('B')->setWidth(8);
+        $sheet->getColumnDimension('C')->setWidth(15);
+        $sheet->getColumnDimension('D')->setWidth(20);
+        $sheet->getColumnDimension('E')->setWidth(13);
+        $sheet->getColumnDimension('F')->setWidth(13);
+        // header text
+
+
+        $sheet
+            ->setCellValue('A1', 'lama bekerja')
+            ->setCellValue('B1', 'lokasi')
+            ->setCellValue('C1', 'nama')
+            ->setCellValue('D1', 'kategori')
+            ->setCellValue('E1', 'ttl hari')
+            ->setCellValue('F1', 'ttl jam')
+            ->setCellValue('G1', 'gaji')
+            ->setCellValue('H1', 'terima point')
+            ->setCellValue('I1', 'komisi')
+            ->setCellValue('J1', 'bonus')
+            ->setCellValue('K1', 'ttl gaji + kom')
+            ->setCellValue('L1', 'tips')
+            ->setCellValue('M1', 'denda')
+            ->setCellValue('N1', 'kasbon')
+            ->setCellValue('O1', 'sisa gaji');
+
+        $kolomTkm = 2;
+        $bulan =  date('m', strtotime($r->tgl1));
+        $tahun =  date('Y', strtotime($r->tgl1));
+
+        $gaji = DB::table('gaji_fix')->where('bulan', $bulan)->where('tahun', $tahun)->get();
+        foreach ($gaji as $k) {
+            $spreadsheet->setActiveSheetIndex(0);
+            $sheet->setCellValue('A' . $kolomTkm, $k->lama_bekerja);
+            $sheet->setCellValue('B' . $kolomTkm, $k->lokasi);
+            $sheet->setCellValue('C' . $kolomTkm, strtolower($k->nama));
+            $sheet->setCellValue('D' . $kolomTkm, $k->kategori);
+            $sheet->setCellValue('E' . $kolomTkm, $k->ttl_hari);
+            $sheet->setCellValue('F' . $kolomTkm, $k->ttl_jam);
+            $sheet->setCellValue('G' . $kolomTkm, $k->gaji);
+            $sheet->setCellValue('H' . $kolomTkm, $k->terima_point);
+            $sheet->setCellValue('I' . $kolomTkm, $k->komisi);
+            $sheet->setCellValue('J' . $kolomTkm, $k->bonus);
+            $sheet->setCellValue('K' . $kolomTkm, $k->gaji + $k->komisi + $k->bonus);
+            $sheet->setCellValue('L' . $kolomTkm, $k->tips);
+            $sheet->setCellValue('M' . $kolomTkm, $k->denda);
+            $sheet->setCellValue('N' . $kolomTkm, $k->kasbon);
+            $sheet->setCellValue('O' . $kolomTkm, $k->gaji + $k->komisi + $k->bonus - $k->denda - $k->kasbon);
+
+            $kolomTkm++;
+            // $i++;
+        }
+
+        $writer = new Xlsx($spreadsheet);
+        $batas = $kolomTkm - 1;
+        $sheet->getStyle('A1:O1')->applyFromArray($style_header);
+        $sheet->getStyle('A2:O' . $batas)->applyFromArray($style);
+
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="Gaji All.xlsx"');
+        header('Cache-Control: max-age=0');
+
+        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
+        $writer->save('php://output');
+    }
+
+
+    public function import_gaji(Request $r)
+    {
+        $hasError = false; // Variabel flag untuk melacak apakah ada kesalahan
+        if ($r->hasFile('file')) {
+            $file = $r->file('file');
+            $filePath = $file->storeAs('temp', 'imported_file.xlsx');
+
+            try {
+                $spreadsheet = IOFactory::load(storage_path("app/{$filePath}"));
+                $sheetNames = $spreadsheet->getSheetNames();
+
+
+                DB::table('gaji_fix')->where('bulan', $r->bulan)->where('tahun', $r->tahun)->delete();
+
+                foreach ($sheetNames as $sheetName) {
+                    $currentSheet = $spreadsheet->getSheetByName($sheetName);
+                    $title = $currentSheet->getTitle();
+
+                    if ($title === 'Gaji Resto') {
+                        $hasError = false;
+                    } else {
+                        $hasError = true;
+                    }
+
+                    foreach ($currentSheet->getRowIterator() as $rowIndex => $row) {
+                        if ($rowIndex === 1) {
+                            continue;
+                        }
+                        $rowData = [];
+                        $cellIterator = $row->getCellIterator();
+
+                        foreach ($cellIterator as $cell) {
+                            $rowData[] = $cell->getValue();
+                        }
+
+                        if (empty(array_filter(array_slice($rowData, 0, 13), 'strlen'))) {
+                            continue;
+                        }
+                        try {
+                            DB::table('gaji_fix')->insert([
+                                'lama_bekerja' => $rowData[0],
+                                'lokasi' => empty($rowData[1]) ? '-' : $rowData[1],
+                                'nama' => $rowData[2],
+                                'kategori' => $rowData[3],
+                                'ttl_hari' => $rowData[4],
+                                'ttl_jam' => $rowData[5],
+                                'gaji' => $rowData[6],
+                                'terima_point' => empty($rowData[7]) ? 0 : $rowData[7],
+                                'komisi' => empty($rowData[8]) ? 0 : $rowData[8],
+                                'bonus' => empty($rowData[9]) ? 0 : $rowData[9],
+                                'tips' => empty($rowData[11]) ? 0 : $rowData[11],
+                                'denda' => empty($rowData[12]) ? 0 : $rowData[12],
+                                'kasbon' => empty($rowData[13]) ? 0 : $rowData[13],
+                                'bulan' => $r->bulan,
+                                'tahun' => $r->tahun,
+                            ]);
+                        } catch (\Exception $e) {
+                            // Jika terjadi kesalahan, atur flag dan hentikan pembaruan
+                            $hasError = true;
+                            break 2; // Keluar dari kedua loop (sheet dan row)
+                        }
+                    }
+                }
+                if (!$hasError) {
+                    DB::commit(); // Commit transaksi jika tidak ada kesalahan
+                    return redirect()->route('point_kitchen')->with('success', 'Data berhasil diimpor');
+                }
+            } catch (\Exception $e) {
+                echo 'Error loading spreadsheet: ' . $e->getMessage();
+            }
+
+            unlink(storage_path("app/{$filePath}"));
+
+            // Jika ada kesalahan, batalkan semua pembaruan
+            if ($hasError) {
+                // return redirect()->route('point_kitchen')->with('error', 'Data gagal di import');
+                return redirect()->route('point_kitchen')->with('error', 'Data gagal diimpor');
+            }
+        }
     }
 }

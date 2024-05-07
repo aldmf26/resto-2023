@@ -6,15 +6,7 @@ $point2 = 0;
 foreach ($masak as $k) : ?>
     <?php $o = $l++; ?>
     <?php $point += $k->point_berhasil + $k->point_gagal; ?>
-
-
     <?php  endforeach ?>
-
-
-
-
-
-
     <div class="content-wrapper" style="min-height: 511px;">
         <!-- Content Header (Page header) -->
         <div class="content-header">

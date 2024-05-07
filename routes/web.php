@@ -559,6 +559,7 @@ Route::get('/point_export_server', [Point_masak::class, 'point_export_server'])-
 Route::get('/detailPoint', [Point_masak::class, 'detailPoint'])->name('detailPoint');
 Route::get('/exportDetailPoint', [Point_masak::class, 'exportDetailPoint'])->name('exportDetailPoint');
 Route::get('/export_gaji_all', [Point_masak::class, 'export_gaji_all'])->name('export_gaji_all');
+Route::post('/import_gaji', [Point_masak::class, 'import_gaji'])->name('import_gaji');
 
 
 // Point kitchen --------------------------------------------

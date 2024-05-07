@@ -46,7 +46,7 @@ foreach ($masak as $k) : ?>
                     </div>
                     <div class="card-header">
                         <div class="row">
-                            <div class="col-lg-6">
+                            <div class="col-lg-4">
                                 <h5>Org p/r :
                                     <?= number_format($jumlah_orang->jumlah, 0) ?> /
                                     <?= number_format($orang, 0) ?>
@@ -64,7 +64,7 @@ foreach ($masak as $k) : ?>
                                 @endif
 
                             </div>
-                            <div class="col-lg-6">
+                            <div class="col-lg-8">
                                 <a href="{{ route('point_export_server') }}?id_lokasi={{ $id_lokasi }}&tgl1={{ $tgl1 }}&tgl2={{ $tgl2 }}"
                                     class="btn btn-info float-right btn-sm "><i class="fas fa-file-excel"></i>
                                     Export Kitchen</a>
@@ -74,6 +74,9 @@ foreach ($masak as $k) : ?>
                                 <a href="{{ route('export_gaji_all') }}?id_lokasi={{ $id_lokasi }}&tgl1={{ $tgl1 }}&tgl2={{ $tgl2 }}"
                                     class="btn btn-info float-right btn-sm mr-2"><i class="fas fa-file-excel"></i>
                                     Export Gaji</a>
+                                <a href="#" data-target="#import" data-toggle="modal"
+                                    class="btn btn-info float-right btn-sm mr-2"><i class="fas fa-upload"></i>
+                                    Import Gaji</a>
                                 <a href="" data-target="#view" data-toggle="modal"
                                     class="btn btn-info float-right btn-sm mr-2"><i class="fas fa-eye"></i> View</a>
                             </div>
@@ -258,11 +261,49 @@ foreach ($masak as $k) : ?>
         </div>
     </form>
 
-    <form action="" method="get">
-        <div class="modal fade" role="dialog" id="viewDetail" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg" role="document">
-                <div id="viewDetailPoint"></div>
+    <form action="{{ route('import_gaji') }}" method="post" enctype="multipart/form-data">
+        @csrf
+        <div class="modal fade" role="dialog" id="import" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content ">
+                    <div class="modal-header btn-costume">
+                        <h5 class="modal-title text-light" id="exampleModalLabel">Import Gaji</h5>
+                        <button type="button" class="close text-light" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-lg-6 mb-2">
+                                <label for="">Bulan</label>
+                                <select name="bulan" id="" class="form-control">
+                                    <option value="">Pilih Bulan</option>
+                                    @foreach ($bulan as $b)
+                                        <option value="{{ $b->id_bulan }}">{{ $b->nm_bulan }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-lg-6 mb-2">
+                                <label for="">Tahun</label>
+                                <select name="tahun" id="" class="form-control">
+                                    <option value="">Pilih Tahun</option>
+                                    @foreach ($tahun as $t)
+                                        <option value="{{ $t->tahun }}"
+                                            {{ $t->tahun == date('Y') ? 'selected' : '' }}>{{ $t->tahun }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-lg-12">
+                                <label for="">Import Gaji</label>
+                                <input type="file" class="form-control" name="file">
+                            </div>
+                        </div>
 
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">Save</button>
+                    </div>
+                </div>
             </div>
         </div>
     </form>
@@ -297,7 +338,11 @@ foreach ($masak as $k) : ?>
                         });
                     }
                 });
-            })
+            });
+            $(document).on('submit', '#upload_excel', function(e) {
+                e.preventDefault();
+                $('#upload_excel').modal('hide');
+            });
 
             $("#exportDetailPoint").click(function(e) {
                 e.preventDefault();
