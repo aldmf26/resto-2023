@@ -112,7 +112,20 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
+                                                    @php
+                                                        $currentStation = null;
+                                                    @endphp
                                                     @foreach ($penjualan as $no => $p)
+                                                        @if ($p->Station != $currentStation)
+                                                            @php
+                                                                $currentStation = $p->Station;
+                                                            @endphp
+                                                            <!-- Tag di atas station baru -->
+                                                            <tr>
+                                                                <td colspan="15"><strong>{{ $currentStation }}</strong>
+                                                                </td>
+                                                            </tr>
+                                                        @endif
                                                         <tr>
                                                             <td>{{ $no + 1 }}</td>
                                                             <td>{{ $p->Station }}</td>

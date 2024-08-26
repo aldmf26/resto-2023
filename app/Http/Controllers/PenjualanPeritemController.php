@@ -45,11 +45,12 @@ class PenjualanPeritemController extends Controller
     LEFT JOIN tb_station AS d ON d.id_station = c.id_station
     WHERE YEAR(a.tgl) = '$tahun' AND a.id_lokasi = '$lokasi' AND a.id_harga != 0 and b.nm_menu is not null
     GROUP BY a.id_harga
-    order by b.nm_menu ASC");
+    order by d.nm_station ASC");
 
         $data = [
             'title' => 'Penjualan pertahun',
             'penjualan' => $penjualan,
+            'station' => DB::table('tb_station')->where('id_lokasi', $lokasi)->get(),
             'tahun' => DB::select("SELECT YEAR(a.tgl) as tahun FROM tb_order as a where YEAR(a.tgl) != 0 group by YEAR(a.tgl);"),
             'logout' => $r->session()->get('logout'),
             'thn' => $tahun,
