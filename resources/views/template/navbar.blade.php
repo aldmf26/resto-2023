@@ -52,12 +52,12 @@
                             src="{{ asset('assets') }}/img_menu/stock.png"><span>Stok</span>
                     </a>
                 </li>
-                <li>
+                {{-- <li>
                     <a href="{{ route('bahandanmenu') }}"><img src="{{ asset('assets') }}/img_menu/menu.png"><span>Menu
                             dan
                             Bahan</span>
                     </a>
-                </li>
+                </li> --}}
                 <li class="dropdown"><a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown"> <img
                             src="{{ asset('assets') }}/img_menu/server.png"><span>Database</span> <b
                             class="caret"></b></a>
