@@ -86,37 +86,37 @@
             }
 
             $(document).on('click', '.save', function(event) {
-                
-                    // var id_karyawan = $("#id_karyawan").val();
-                    var id_karyawan = $(this).attr('id_karyawan');
-                    var tgl = $("#tgl").val();
-                    var ket = $(this).attr('ket');
-                    console.log(id_karyawan);
-                    $.ajax({
-                        type: "POST",
-                        url: "<?= route('addAbsenM') ?>",
-                        data: {
-                            id_karyawan: id_karyawan,
-                            tgl: tgl,
-                            ket: ket,
-                            "_token": "{{ csrf_token() }}"
-                        },
-                        success: function(response) {
-                            Swal.fire({
-                                toast: true,
-                                position: 'top-end',
-                                showConfirmButton: false,
-                                timer: 3000,
-                                icon: 'success',
-                                title: 'Data absen telah ditambahkan'
-                            });
-                            // var audio = document.getElementById("audio");
-                            // audio.play();
-                            load_absen();
-                        }
-                    });
-                
-                
+
+                // var id_karyawan = $("#id_karyawan").val();
+                var id_karyawan = $(this).attr('id_karyawan');
+                var tgl = $("#tgl").val();
+                var ket = $(this).attr('ket');
+                console.log(id_karyawan);
+                $.ajax({
+                    type: "POST",
+                    url: "<?= route('addAbsenM') ?>",
+                    data: {
+                        id_karyawan: id_karyawan,
+                        tgl: tgl,
+                        ket: ket,
+                        "_token": "{{ csrf_token() }}"
+                    },
+                    success: function(response) {
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 3000,
+                            icon: 'success',
+                            title: 'Data absen telah ditambahkan'
+                        });
+                        // var audio = document.getElementById("audio");
+                        // audio.play();
+                        load_absen();
+                    }
+                });
+
+
             });
             $(document).on('click', '.btn-del', function(event) {
                 var id_absen = $(this).attr('id_absen');

@@ -1,96 +1,77 @@
-<?php
-header('Content-type: application/vnd-ms-excel');
-header('Content-Disposition: attachment; filename=Data Gaji Resto.xls');
-?>
-<div class="row">
-    <div class="col-12">
-        <div class="card mt-5">
-            <center>
-                <h2 style="margin-right: 300px">Gaji Karyawan</h2>
-            </center>
-            <div class="card-header">
-                <h3 style="margin-left: 50px">Dari {{ $dari }} Sampai {{ $sampai }}</h3>
-            </div>
+<table class="table  table-bordered" id="table">
+    <thead>
+        <tr>
+            <th width="38px">NO</th>
+            <th width="270px">NAMA KARYAWAN</th>
+            <th width="171px">TANGGAL MASUK</th>
+            <th width="103px">KATEGORI</th>
+            <th width="152px">POSISI</th>
+            <th width="94px">TIPE GAJI</th>
+            <th width="108px" class="text-right">RP <br> hari/jam</th>
+            @foreach ($shift as $s)
+                <th class="text-center" width="69px">ABSEN <br> {{ $s->ket }}</th>
+            @endforeach
+            <th class="text-center" width="120px">TOTAL ABSEN</th>
+            <th class="text-center" width="120px">TOTAL GAJI</th>
+            <th class="text-center" width="120px">KASBON</th>
+            <th class="text-center" width="120px">DENDA</th>
+            <th class="text-center" width="120px">SISA GAJI</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach ($gaji as $no => $g)
+            <tr>
+                <td>{{ $no + 1 }}</td>
+                <td>{{ $g->nama }}</td>
+                <td>{{ $g->tgl_masuk }}</td>
+                <td>{{ $g->nm_status }}</td>
+                <td>{{ $g->nm_posisi }}</td>
+                <td>{{ $g->kategori }}</td>
+                <td class="text-right">{{ $g->rp_gaji }}</td>
+                @php
+                    $ttl_shift = 0;
+                @endphp
+                @foreach ($shift as $s)
+                    @php
+                        $ket = $s->ket;
+                        $ttl_shift += $g->$ket * ($g->rp_gaji * $s->waktu);
+                    @endphp
+                    <td class="text-center">{{ $g->$ket }}</td>
+                @endforeach
+                <td class="text-center">{{ $g->ttl }}</td>
+                @if ($g->kategori == 'bulanan')
+                    <td class="text-center">{{ $g->rp_gaji * $g->ttl }}
+                    </td>
+                @else
+                    <td class="text-center">{{ $ttl_shift }}</td>
+                @endif
+                <td class="text-center">{{ $g->kasbon }}</td>
+                <td class="text-center">{{ $g->denda }}</td>
+                @if ($g->kategori == 'bulanan')
+                    <td class="text-center">
+                        {{ $g->rp_gaji * $g->ttl - ($g->kasbon + $g->denda) }}
+                    </td>
+                @else
+                    <td class="text-center">
+                        {{ $ttl_shift - ($g->kasbon + $g->denda) }}</td>
+                @endif
+            </tr>
+        @endforeach
 
-            <div class="card-body">
-                <table border="1">
+    </tbody>
+    <tfoot>
+        <tr>
+            <th colspan="7">TOTAL</th>
+            <th>=SUM(H2:H{{ $no + 2 }})</th>
+            <th>=SUM(I2:I{{ $no + 2 }})</th>
+            <th>=SUM(J2:J{{ $no + 2 }})</th>
+            <th>=SUM(K2:K{{ $no + 2 }})</th>
+            <th>=SUM(L2:L{{ $no + 2 }})</th>
+            <th>=SUM(M2:M{{ $no + 2 }})</th>
+            <th>=SUM(N2:N{{ $no + 2 }})</th>
+            <th>=SUM(O2:O{{ $no + 2 }})</th>
 
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Nama</th>
-                            <th>Tgl Masuk</th>
-                            <th>Tahun</th>
-                            <th>Bulan</th>
-                            <th>Posisi</th>
-                            <th>Absen OFF</th>
-                            <th>Absen M</th>
-                            <th>Absen E</th>
-                            <th>Absen SP</th>
-                            <th>Total Antar</th>
-                            <th>TOTAL TERIMA ORDER</th>
-                            <th>RP M</th>
-                            <th>RP E</th>
-                            <th>RP SP</th>
-                            <th>Bulanan</th>
-                            <th>Point Masak</th>
-                            <th>Non Point Masak</th>
-                            <th>Kerja lain-lain / Ttl Jam</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @php
-                            $no = 1;
-                            $total = 0;
-                            $total_gagal = 0;
-                            $total_berhasil = 0;
-                            $total_cuci = 0;
-                        @endphp
-                        @foreach ($gaji as $k)
-                            @php
-                                
-                                $total += $k->rp_m * $k->M + $k->rp_e * $k->E + $k->rp_sp * $k->Sp + $k->g_bulanan;
-                                $total_cuci += $k->lama_cuci ? $k->lama_cuci / 60 : 0;
-                                
-                            @endphp
-                            <tr>
-                                <td>{{ $no++ }}</td>
-                                <td>{{ $k->nama }}</td>
-                                <td>{{ $k->tgl_masuk }}</td>
-                                @php
-                                    $totalKerja = new DateTime($k->tgl_masuk);
-                                    $today = new DateTime();
-                                    $tKerja = $today->diff($totalKerja);
-                                @endphp
-                                <td>{{ $tKerja->y }}</td>
-                                <td>{{ $tKerja->m }}</td>
-                                <td>{{ $k->nm_posisi }}</td>
-                                <td>{{ $k->of }}</td>
-                                <td>{{ $k->M }}</td>
-                                <td>{{ $k->E }}</td>
-                                <td>{{ $k->Sp }}</td>
-                                <td>{{ $k->ttl_pengantar == '' ? '0' : $k->ttl_pengantar }}</td>
-                                <td>{{ $k->ttl_admin == '' ? '0' : $k->ttl_admin }}</td>
-                                <td>{{ number_format($k->rp_m, 0) }}</td>
-                                <td>{{ number_format($k->rp_e, 0) }}</td>
-                                <td>{{ number_format($k->rp_sp, 0) }}</td>
-                                <td>{{ number_format($k->g_bulanan, 0) }}</td>
-                                <td>{{ number_format($k->point_berhasil ? $k->point_berhasil : 0,1) }}</td>
-                                <td>{{ number_format($k->point_gagal ? $k->point_gagal : 0,1) }}</td>
-                                <td>{{ number_format($k->lama_cuci ? $k->lama_cuci / 60 : 0, 1) }}</td>
-                            </tr>
-                        @endforeach
-                        <tr>
-                            <th colspan="12" align="center">TOTAL</th>
-                            <th>{{ number_format($total) }}</th>
-                            <th><?= number_format($total_berhasil, 1) ?></th>
-                            <th><?= number_format($total_gagal, 1) ?></th>
-                            <th><?= number_format($total_cuci, 1) ?></th>
-                        </tr>
-                    </tbody>
+        </tr>
+    </tfoot>
 
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
+</table>

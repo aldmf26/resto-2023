@@ -10,6 +10,11 @@ class Denda extends Model
     use HasFactory;
     protected $table = 'tb_denda';
     protected $fillable = [
-        'nama', 'alasan', 'nominal', 'tgl', 'id_lokasi', 'admin'
+        'id_karyawan',
+        'alasan',
+        'nominal',
+        'tgl',
+        'id_lokasi',
+        'admin'
     ];
 }

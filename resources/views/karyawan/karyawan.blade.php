@@ -23,70 +23,52 @@
                             <div class="card-header">
                                 <h5>Data karyawan</h5>
                                 <?php if(Auth::user()->username == 'herry' || Auth::user()->username == 'nanda' || Auth::user()->username == 'aldi' || Auth::user()->username == 'linda'){ ?>
-                                <a href="#" data-target="#import" data-toggle="modal" class="btn btn-primary float-right ml-2"><i
-                                        class="fas fa-file-import"></i> Import</a>
-                                <?php }else{ ?>    
+                                <a href="#" data-target="#import" data-toggle="modal"
+                                    class="btn btn-primary float-right ml-2"><i class="fas fa-file-import"></i> Import</a>
+                                <?php }else{ ?>
                                 <?php } ?>
-                                <a href="" data-toggle="modal" data-target="#tambah" class="btn btn-info float-right"><i
-                                        class="fas fa-plus"></i> Tambah karyawan</a>
+                                <a href="" data-toggle="modal" data-target="#tambah"
+                                    class="btn btn-info float-right"><i class="fas fa-plus"></i> Tambah karyawan</a>
                             </div>
                             @include('flash.flash')
                             <div class="card-body">
                                 <table class="table  " id="table">
-
                                     <thead>
                                         <tr>
                                             <th>NO</th>
                                             <th>NAMA KARYAWAN</th>
                                             <th>TANGGAL MASUK</th>
-                                            <th>STATUS</th>
+                                            <th>DIVISI</th>
                                             <th>POSISI</th>
-                                            @if(Auth::user()->username == 'herry' || Auth::user()->username == 'nanda' || Auth::user()->username == 'aldi' || Auth::user()->username == 'linda')
-                                            <th>RP M</th>
-                                            <th>RP E</th>
-                                            <th>RP Sp</th>
+                                            @foreach ($shift as $s)
+                                                <th class="text-right">{{ $s->ket }}</th>
+                                            @endforeach
                                             <th>BULANAN</th>
-                                            <th>POINT</th>
-                                            @else
-                                            @endif
                                             <th>AKSI</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @php
-                                            $no = 1;
-                                        @endphp
-                                        @foreach ($karyawan as $k)
-                                            @php
-                                                $totalKerja = new DateTime($k->tgl_masuk);
-                                                $today = new DateTime();
-                                                $tKerja = $today->diff($totalKerja);
-                                            @endphp
+                                        @foreach ($karyawan as $no => $k)
                                             <tr>
-                                                <td>{{ $no++ }}</td>
+                                                <td>{{ $no + 1 }}</td>
                                                 <td>{{ $k->nama }}</td>
-                                                <td>{{ tanggal($k->tgl_masuk) }} ({{ $tKerja->m }} Bln {{ $tKerja->y }} Thn)</td>
+                                                <td>{{ date('d-F-Y', strtotime($k->tgl_masuk)) }}</td>
                                                 <td>{{ $k->nm_status }}</td>
                                                 <td>{{ $k->nm_posisi }}</td>
-                                                @if(Auth::user()->username == 'herry' || Auth::user()->username == 'nanda' || Auth::user()->username == 'aldi' || Auth::user()->username == 'linda')
-                                                <td align="right">{{ number_format($k->rp_m,0) }}</td>
-                                                <td align="right">{{ number_format($k->rp_e,0) }}</td>
-                                                <td align="right">{{ number_format($k->rp_sp,0) }}</td>
-                                                <td align="right">{{ number_format($k->g_bulanan,0) }}</td>
-                                                @if($k->point == 'T')
-                                                <td><a href="{{route('addPoint', ['value' => 'Y', 'id_karyawan' => $k->id_karyawan])}}" class="btn btn-danger btn-sm"><i class="fas fa-times-circle"></i></a></td>
-                                                @else
-                                                <td><a href="{{route('addPoint', ['value' => 'T', 'id_karyawan' => $k->id_karyawan])}}" class="btn btn-success btn-sm"><i class="fas fa-check-circle"></i></a></td>
-                                                @endif
-                                                @else
-                                                @endif
-                                                
-                                              
+                                                @foreach ($shift as $s)
+                                                    <td class="text-right">
+                                                        {{ $k->kategori == 'bulanan' ? 0 : number_format($k->rp_gaji * $s->waktu, 0) }}
+                                                    </td>
+                                                @endforeach
+                                                <td class="text-right">
+                                                    {{ $k->kategori == 'bulanan' ? number_format($k->rp_gaji * 26, 0) : 0 }}
+                                                </td>
                                                 <td style="white-space: nowrap;">
-                                                    <a href="" data-toggle="modal"
-                                                        data-target="#edit_data{{ $k->id_karyawan }}" id_menu="1"
-                                                        class="btn edit_menu btn-new" style="background-color: #F7F7F7;"><i
-                                                            style="color: #B0BEC5;"><i class="fas fa-edit"></i></a>
+                                                    <a href="" data-toggle="modal" data-target="#edit"
+                                                        id_karyawan="{{ $k->id_karyawan }}"
+                                                        class="btn edit_karyawan btn-new"
+                                                        style="background-color: #F7F7F7;"><i style="color: #B0BEC5;"><i
+                                                                class="fas fa-edit"></i></a>
                                                     <a onclick="return confirm('Apakah ingin dihapus ?')"
                                                         href="{{ route('deleteKaryawan', ['id_karyawan' => $k->id_karyawan]) }}"
                                                         class="btn  btn-new" style="background-color: #ff0000;">
@@ -94,6 +76,8 @@
                                                 </td>
                                             </tr>
                                         @endforeach
+
+
                                     </tbody>
 
                                 </table>
@@ -124,10 +108,10 @@
         .modal-lg-max {
             max-width: 900px;
         }
+
         .modal-mds {
             max-width: 700px;
         }
-
     </style>
     {{-- import --}}
     <form action="{{ route('gajiImport') }}" enctype="multipart/form-data" method="post">
@@ -145,40 +129,41 @@
                         <div class="row">
                             <table>
                                 <tr>
-                                <td width="100" class="pl-2">
-                                    <img width="80px" src="{{ asset('assets') }}/img/1.png" alt="">
-                                </td>
-                                <td>
-                                    <span style="font-size: 20px;"><b> Download Excel template</b></span><br>
-                                    File ini memiliki kolom header dan isi yang sesuai dengan data karyawan
-                                </td>
-                                <td>
-                                    <a href="{{ route('gajiExportTemplate') }}" class="btn btn-primary btn-sm"><i class="fa fa-download"></i> DOWNLOAD TEMPLATE</a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="3">
-                                    <hr>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td width="100" class="pl-2">
-                                    <img width="80px" src="{{ asset('assets') }}/img/2.png" alt="">
-                                </td>
-                                <td>
-                                    <span style="font-size: 20px;"><b> Upload Excel template</b></span><br>
-                                    Setelah mengubah, silahkan upload file.
-                                </td>
-                                <td>
-                                    <input type="file" name="file" class="form-control">
-                                </td>
-                            </tr>
+                                    <td width="100" class="pl-2">
+                                        <img width="80px" src="{{ asset('assets') }}/img/1.png" alt="">
+                                    </td>
+                                    <td>
+                                        <span style="font-size: 20px;"><b> Download Excel template</b></span><br>
+                                        File ini memiliki kolom header dan isi yang sesuai dengan data karyawan
+                                    </td>
+                                    <td>
+                                        <a href="{{ route('gajiExportTemplate') }}" class="btn btn-primary btn-sm"><i
+                                                class="fa fa-download"></i> DOWNLOAD TEMPLATE</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3">
+                                        <hr>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="100" class="pl-2">
+                                        <img width="80px" src="{{ asset('assets') }}/img/2.png" alt="">
+                                    </td>
+                                    <td>
+                                        <span style="font-size: 20px;"><b> Upload Excel template</b></span><br>
+                                        Setelah mengubah, silahkan upload file.
+                                    </td>
+                                    <td>
+                                        <input type="file" name="file" class="form-control">
+                                    </td>
+                                </tr>
                             </table>
-                            
+
                         </div>
                         <div class="row">
                             <div class="col-12">
-                                
+
                             </div>
                         </div>
                     </div>
@@ -238,23 +223,42 @@
                         <br>
                         <div class="row">
                             <div class="col-lg-3">
-                                    <label for="">Rp M</label>
-                                    <input class="form-control" required type="text" value="" name="rp_m">
-                                </div>
-                                <div class="col-lg-3">
-                                    <label for="">Rp E</label>
-                                    <input class="form-control" required type="text" value="" name="rp_e">
-                                </div>
-                                <div class="col-lg-3">
-                                    <label for="">Rp SP</label>
-                                    <input class="form-control" required type="text" value="" name="rp_sp">
-                                </div>
-                                <div class="col-lg-3">
-                                    <label for="">Bulanan</label>
-                                    <input class="form-control" required type="text" value=""
-                                        name="g_bulanan">
-                                </div>
+                                <label for="">Kategori Gaji</label>
+                                <select name="kategori_gaji" id="" class="form-control cek_kategori">
+                                    <option value="">-Pilih Katgeori-</option>
+                                    <option value="bulanan">bulanan</option>
+                                    <option value="shift">shift</option>
+                                </select>
+                            </div>
+                            <div class="col-lg-3">
+                                <label for="">Rp Gaji</label>
+                                <input class="form-control" required type="text" value="" name="rp_gaji">
+                                <p class="text-danger font-weight-bold note_shift" hidden>note : isi rp/jam nya saja</p>
+                                <p class="text-danger font-weight-bold note_bulanan" hidden>note : isi rp/hari nya saja</p>
+                            </div>
                         </div>
+                    </div>
+                    <div class="modal-footer">
+
+                        <button type="submit" class="btn btn-success">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <form action="{{ route('editKaryawan') }}" method="post" accept-charset="utf-8">
+        @csrf
+        <div class="modal fade" id="edit" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg-max" role="document">
+                <div class="modal-content ">
+                    <div class="modal-header btn-costume">
+                        <h5 class="modal-title text-light" id="exampleModalLabel">Edit karyawan</h5>
+                        <button type="button" class="close text-light" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="load_edit_karyawan"></div>
                     </div>
                     <div class="modal-footer">
 
@@ -266,96 +270,39 @@
     </form>
 
     {{-- modal untuk edit --}}
-    @foreach ($karyawan as $k)
-        <form action="{{ route('editKaryawan') }}" method="post" accept-charset="utf-8">
-            @csrf
-            @method('patch')
-            <div class="modal fade" id="edit_data{{ $k->id_karyawan }}" role="dialog"
-                aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-lg-max" role="document">
-                    <div class="modal-content ">
-                        <div class="modal-body">
-                            <div class="row">
-                                <input type="hidden" name="id_karyawan" value="{{ $k->id_karyawan }}">
-                                <div class="col-lg-3">
-                                    <label for="">Tgl Masuk</label>
-                                    <input type="date" value="{{ $k->tgl_masuk }}" name="tgl_masuk"
-                                        class="form-control">
-                                </div>
-                                <div class="col-lg-3">
-                                    <label for="">Nama</label>
-                                    <input type="text" name="nama" value="{{ $k->nama }}" class="form-control">
-                                </div>
 
-                                <div class="col-lg-3">
-                                    <label for="">Status</label>
-                                    <select name="status" id="" class="form-control">
-                                        <option value="">- Pilih Status - </option>
-                                        @foreach ($status as $s)
-                                            <option value="{{ $s->id_status }}"
-                                                {{ $s->id_status == $k->id_status ? 'selected' : '' }}>
-                                                {{ $s->nm_status }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="col-lg-3">
-                                    <label for="">Posisi</label>
-                                    <select name="posisi" id="" class="form-control">
-                                        <option value="">- Pilih Posisi - </option>
-                                        @foreach ($posisi as $p)
-                                            <?php if($p->id_posisi == 1){ ?>
-                                            <?php continue; ?>
-                                            <?php } ?>
-                                            <option value="{{ $p->id_posisi }}"
-                                                {{ $p->id_posisi == $k->id_posisi ? 'selected' : '' }}>
-                                                {{ $p->nm_posisi }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                            </div>
-                            <?php if(Auth::user()->username == 'herry' || Auth::user()->username == 'linda' || Auth::user()->username == 'aldi'){ ?>
-                            <hr style="border: 1px solid black">
-                            <div class="row">
-                                @php
-                                    $gaji = DB::select("SELECT a.*, b.*, c.id_gaji, c.rp_e, c.rp_m, c.rp_sp, c.g_bulanan FROM tb_karyawan as a LEFT JOIN tb_posisi as b ON a.id_posisi =  b.id_posisi LEFT JOIN tb_gaji as c ON a.id_karyawan = c.id_karyawan WHERE a.id_karyawan = $k->id_karyawan ORDER BY a.tgl_masuk DESC");
-                                @endphp
-                                @foreach ($gaji as $s)                          
-                                <input type="hidden" name="id_gaji" value="{{ $s->id_gaji }}">
-                                
-                                <div class="col-lg-3">
-                                    <label for="">Rp M</label>
-                                    <input class="form-control" type="text" value="{{ $s->rp_m }}" name="rp_m">
-                                </div>
-                                <div class="col-lg-3">
-                                    <label for="">Rp E</label>
-                                    <input class="form-control" type="text" value="{{ $s->rp_e }}" name="rp_e">
-                                </div>
-                                <div class="col-lg-3">
-                                    <label for="">Rp SP</label>
-                                    <input class="form-control" type="text" value="{{ $s->rp_sp }}" name="rp_sp">
-                                </div>
-                                <div class="col-lg-3">
-                                    <label for="">Bulanan</label>
-                                    <input class="form-control" type="text" value="{{ $s->g_bulanan }}"
-                                        name="g_bulanan">
-                                </div>
-                                @endforeach
-                            </div>
-                            <?php }else{ ?>
-                            <?php } ?>
-                            
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-costume" data-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-costume">Save</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </form>
-    @endforeach
     {{-- ---------------- --}}
 @endsection
 @section('script')
+    <script>
+        $(document).ready(function() {
+            $(document).on('change', '.cek_kategori', function(e) {
+                e.preventDefault();
+                var kat = $(this).val()
+                if (kat == 'bulanan') {
+                    $('.note_shift').attr('hidden', true); // Sembunyikan elemen
+                    $('.note_bulanan').removeAttr('hidden'); // Sembunyikan elemen
+                } else {
+                    $('.note_bulanan').attr('hidden', true);
+                    $('.note_shift').removeAttr('hidden'); // Tampilkan elemen
+                }
+            });
+            $(document).on('click', '.edit_karyawan', function(e) {
+                e.preventDefault();
+                var id_karyawan = $(this).attr('id_karyawan');
+
+                $.ajax({
+                    type: "get",
+                    url: "{{ route('getEditKaryawan') }}",
+                    data: {
+                        id_karyawan: id_karyawan
+                    },
+                    success: function(response) {
+                        $('#load_edit_karyawan').html(response);
+                    }
+                });
+
+            });
+        });
+    </script>
 @endsection

@@ -36,16 +36,15 @@
                 <input type="hidden" name="id_meja[]" value="<?= $o->id_meja ?>">
             </td>
             <td style="text-align: center;"><?= number_format($o->harga, 0) ?></td>
-            <td style="text-align: center;" class="total<?= $o->id_order ?>"><?= number_format($o->qty * $o->harga, 0) ?>
+            <td style="text-align: center;" class="total<?= $o->id_order ?>">
+                <?= number_format($o->qty * $o->harga, 0) ?>
             </td>
             <td><input type="hidden" class="tl" id="total_id<?= $o->id_order ?>"
                     value="<?= $o->qty * $o->harga ?>"></td>
         </tr>
         <?php endforeach ?>
     </tbody>
-    <?php $tb_dis = DB::table('tb_distribusi')
-        ->where('id_distribusi', $id_distribusi)
-        ->first(); ?>
+    <?php $tb_dis = DB::table('tb_distribusi')->where('id_distribusi', $id_distribusi)->first(); ?>
     <tbody>
         <tr>
             <th style=" background-color: #25C584;color:white;font-size: 16px;" colspan="2">Subtotal</th>
@@ -53,8 +52,8 @@
             <th style="background-color: #25C584;color:white;font-size: 16px;" class="total_qty"> <?= $qty ?></th>
             <th style="background-color: #25C584;color:white;font-size: 16px;text-align: center;"> <input type="hidden"
                     id="hrg" value="<?= $harga ?>"></th>
-            <th style="background-color: #25C584;color:white;font-size: 16px; text-align: center; "
-                class="total_hrg"><?= number_format($total2, 0) ?>
+            <th style="background-color: #25C584;color:white;font-size: 16px; text-align: center; " class="total_hrg">
+                <?= number_format($total2, 0) ?>
             </th>
             <th style="background-color: #25C584;color:white;font-size: 16px;">
                 <input type="hidden" class="ttl_hrg" id="ttl_hrg" value="<?= $total2 ?>">
@@ -80,9 +79,7 @@
     <input type="hidden" id="batas" value="<?= $batas->rupiah ?>">
     <input type="hidden" id="ong" value="<?= $batas->rupiah ?>">
     <tbody>
-        <?php $tb_dis = DB::table('tb_distribusi')
-            ->where('id_distribusi', $id_distribusi)
-            ->first(); ?>
+        <?php $tb_dis = DB::table('tb_distribusi')->where('id_distribusi', $id_distribusi)->first(); ?>
         <?php if ($tb_dis->service == 'Y') : ?>
         <?php $service = $total2 * 0.07; ?>
         <?php else : ?>
@@ -111,9 +108,7 @@
         }
         ?>
         @php
-            $diskon = DB::table('tb_discount')
-                ->where('lokasi', Session::get('id_lokasi'))
-                ->get();
+            $diskon = DB::table('tb_discount')->where('lokasi', Session::get('id_lokasi'))->get();
         @endphp
 
         <tr>
@@ -233,8 +228,10 @@
             <td colspan="2">Gosend</td>
             <td></td>
             <td></td>
-            <td width="20%"><input type="text" name="ket_gosen" class="form-control" placeholder="keterangan"></td>
-            <td width="20%"><input type="number" class="form-control" name="gosen" id="gosen" value="0"></td>
+            <td width="20%"><input type="text" name="ket_gosen" class="form-control"
+                    placeholder="keterangan"></td>
+            <td width="20%"><input type="number" class="form-control" name="gosen" id="gosen"
+                    value="0"></td>
             <td></td>
         </tr>
         <tr>
@@ -243,8 +240,10 @@
             <td style="font-weight: bold;"></td>
             <td width="20%"></td>
             <td width="20%">
-                <input type="number" id="total1" name="total_dibayar" class="form-control" value="<?= $c ?>" readonly>
-                <input type="hidden" id="total2" name="total_orderan" class="form-control" value="<?= $c ?>" readonly>
+                <input type="number" id="total1" name="total_dibayar" class="form-control" value="<?= $c ?>"
+                    readonly>
+                <input type="hidden" id="total2" name="total_orderan" class="form-control" value="<?= $c ?>"
+                    readonly>
             </td>
             <td></td>
         </tr>
@@ -252,7 +251,8 @@
         <tr>
             <td style="font-weight: bold;" colspan="3">Cash</td>
             <td>:</td>
-            <td colspan="2"><input type="number" id="cash" name="cash" value="0" class="form-control pembayaran"></td>
+            <td colspan="2"><input type="number" id="cash" name="cash" value="0"
+                    class="form-control pembayaran"></td>
             <td><button id="btn_bayar" class="btn btn-info btn-sm save_btn" disabled><i
                         class="fas fa-cash-register"></i> Save</button></td>
 
@@ -260,14 +260,16 @@
         <tr>
             <td style="font-weight: bold;" colspan="3">Debit BCA</td>
             <td>:</td>
-            <td colspan="2"><input type="number" id="bca_debit" value="0" name="d_bca" class="form-control pembayaran">
+            <td colspan="2"><input type="number" id="bca_debit" value="0" name="d_bca"
+                    class="form-control pembayaran">
             </td>
             <td></td>
         </tr>
         <tr>
             <td style="font-weight: bold;" colspan="3">Kredit BCA</td>
             <td>:</td>
-            <td colspan="2"><input type="number" id="bca_kredit" value="0" name="k_bca" class="form-control pembayaran">
+            <td colspan="2"><input type="number" id="bca_kredit" value="0" name="k_bca"
+                    class="form-control pembayaran">
             </td>
             <td></td>
         </tr>

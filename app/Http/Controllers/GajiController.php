@@ -24,6 +24,50 @@ class GajiController extends Controller
         $id_user = Auth::user()->id;
         $id_menu = DB::table('tb_permission')->select('id_menu')->where('id_user', $id_user)
             ->where('id_menu', 22)->first();
+        $shift = DB::table('tb_shift')->get();
+        $tgl1 = empty($request->tgl1) ? date('Y-m-01') : $request->tgl1;
+        $tgl2 = empty($request->tgl2) ? date('Y-m-t') : $request->tgl2;
+
+        $queryParts = [];
+        $show = [];
+        foreach ($shift as $s) {
+            $queryParts[] = "COUNT(CASE WHEN a.shift_id = $s->id_shift THEN tgl END) AS $s->ket";
+            $show[] = " e.$s->ket";
+        }
+        $query = implode(", ", $queryParts);
+        $query_show = implode(", ",  $show);
+        $ttl_show = implode(" + ",  $show);
+
+
+        $gaji = DB::select("SELECT a.id_karyawan, a.nama, a.tgl_masuk, b.nm_status, c.nm_posisi, d.kategori, d.rp_gaji, f.kasbon,g.denda,
+        $query_show , ($ttl_show) as ttl
+        FROM tb_karyawan as a
+        left join tb_status as b on b.id_status = a.id_status
+        left join tb_posisi as c on c.id_posisi = a.id_posisi
+        left join tb_gaji_baru as d on d.karyawan_id = a.id_karyawan
+        
+        left join (
+            SELECT 
+                a.karyawan_id, b.nama,
+                $query
+            FROM absennew as a
+            left join tb_karyawan as b on b.id_karyawan = a.karyawan_id
+            where a.tgl BETWEEN '$tgl1' and '$tgl2'
+            GROUP BY  a.karyawan_id
+        ) as e on e.karyawan_id = a.id_karyawan
+        left join (
+            SELECT f.id_karyawan , sum(f.nominal) as kasbon
+            FROM tb_kasbon as f 
+            where f.tgl BETWEEN '$tgl1' and '$tgl2'
+        ) as f on f.id_karyawan = a.id_karyawan
+        left join (
+            SELECT f.id_karyawan , sum(f.nominal) as denda
+            FROM tb_denda as f 
+            where f.tgl BETWEEN '$tgl1' and '$tgl2'
+        ) as g on g.id_karyawan = a.id_karyawan
+        where a.id_posisi != 2
+        order by  b.nm_status ASC , a.nama ASC;");
+
         if (empty($id_menu)) {
             return back();
         } else {
@@ -31,7 +75,10 @@ class GajiController extends Controller
                 $data = [
                     'title' => 'Gaji',
                     'logout' => $request->session()->get('logout'),
-                    'gaji' => DB::select("SELECT a.*, b.*, c.id_gaji, c.rp_e, c.rp_m, c.rp_sp, c.g_bulanan FROM tb_karyawan as a LEFT JOIN tb_posisi as b ON a.id_posisi =  b.id_posisi LEFT JOIN tb_gaji as c ON a.id_karyawan = c.id_karyawan ORDER BY a.tgl_masuk DESC"),
+                    'gaji' => $gaji,
+                    'shift' => $shift,
+                    'tgl1' => $tgl1,
+                    'tgl2' => $tgl2
                 ];
 
                 return view('gaji.gaji', $data);
@@ -75,77 +122,12 @@ class GajiController extends Controller
         return redirect()->route('gaji');
     }
 
-    public function gajiExport()
+    public function gajiExport(Request $r)
     {
-        $gaji = DB::select("SELECT a.*, b.*, c.id_gaji, c.rp_e, c.rp_m, c.rp_sp, c.g_bulanan FROM tb_karyawan as a LEFT JOIN tb_posisi as b ON a.id_posisi =  b.id_posisi LEFT JOIN tb_gaji as c ON a.id_karyawan = c.id_karyawan ORDER BY a.tgl_masuk DESC");
-
-
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
-        $sheet->getStyle('A1:D4')
-            ->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_TOP);
-        // lebar kolom
-        $sheet->getColumnDimension('A')->setWidth(15);
-        $sheet->getColumnDimension('B')->setWidth(20);
-        $sheet->getColumnDimension('C')->setWidth(15);
-        $sheet->getColumnDimension('D')->setWidth(20);
-        $sheet->getColumnDimension('E')->setWidth(13);
-        $sheet->getColumnDimension('F')->setWidth(13);
-        $sheet->getColumnDimension('G')->setWidth(13);
-        $sheet->getColumnDimension('H')->setWidth(13);
-        $sheet->getColumnDimension('I')->setWidth(13);
-        // header text
-        $sheet
-            ->setCellValue('A1', 'ID KARYAWAN')
-            ->setCellValue('B1', 'NAMA')
-            ->setCellValue('C1', 'POSISI')
-            ->setCellValue('D1', 'TANGGAL MASUK')
-            ->setCellValue('E1', 'LAMA')
-            ->setCellValue('F1', 'RP E')
-            ->setCellValue('G1', 'RP M')
-            ->setCellValue('H1', 'RP SP')
-            ->setCellValue('I1', 'BULANAN');
-        $kolom = 2;
-        $i = 1;
-        foreach ($gaji as $k) {
-            $totalKerja = new DateTime($k->tgl_masuk);
-            $today = new DateTime();
-            $tKerja = $today->diff($totalKerja);
-            $sheet->setCellValue('A' . $kolom, $k->id_karyawan);
-            $sheet->setCellValue('B' . $kolom, $k->nama);
-            $sheet->setCellValue('C' . $kolom, $k->nm_posisi);
-            $sheet->setCellValue('D' . $kolom, $k->tgl_masuk);
-            $sheet->setCellValue('E' . $kolom, $tKerja->y . ' Tahun');
-            $sheet->setCellValue('F' . $kolom, $k->rp_e);
-            $sheet->setCellValue('G' . $kolom, $k->rp_m);
-            $sheet->setCellValue('H' . $kolom, $k->rp_sp);
-            $sheet->setCellValue('I' . $kolom, $k->g_bulanan);
-
-            $kolom++;
-        }
-
-        $writer = new Xlsx($spreadsheet);
-        $style = [
-            'borders' => [
-                'alignment' => [
-                    'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-                    'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
-                ],
-                'allBorders' => [
-                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN
-                ],
-            ],
-        ];
-        $batas = $gaji;
-        $batas = count($batas) + 1;
-        $sheet->getStyle('A1:I' . $batas)->applyFromArray($style);
-
-        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment;filename="Gaji Karyawan.xlsx"');
-        header('Cache-Control: max-age=0');
-
-        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
-        $writer->save('php://output');
+        $tgl1 = $r->tgl1;
+        $tgl2 = $r->tgl2;
+        $karyawan = Karyawan::where('id_posisi', '!=', '2')->count();
+        return Excel::download(new GajiExport($tgl1, $tgl2, $karyawan), 'export_gaji.xlsx');
     }
 
     public function gajiExportTemplate(Request $request)

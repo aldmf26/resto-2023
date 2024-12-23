@@ -55,6 +55,7 @@ use App\Http\Controllers\KpiController;
 use App\Http\Controllers\viewKomServerController;
 use App\Http\Controllers\KlasifikasiPembayaranController;
 use App\Http\Controllers\PenjualanPeritemController;
+use App\Http\Controllers\AbsenBaru;
 
 /*
 |--------------------------------------------------------------------------
@@ -311,8 +312,9 @@ Route::get('/editMenu', [MenuController::class, 'editMenu'])->name('editMenu')->
 
 Route::get('/karyawan', [KaryawanController::class, 'index'])->name('karyawan')->middleware('auth');
 Route::post('/addKaryawan', [KaryawanController::class, 'addKaryawan'])->name('addKaryawan')->middleware('auth');
+Route::get('/getEditKaryawan', [KaryawanController::class, 'getEdit'])->name('getEditKaryawan')->middleware('auth');
 Route::get('/deleteKaryawan', [KaryawanController::class, 'deleteKaryawan'])->name('deleteKaryawan')->middleware('auth');
-Route::patch('/editKaryawan', [KaryawanController::class, 'editKaryawan'])->name('editKaryawan')->middleware('auth');
+Route::post('/editKaryawan', [KaryawanController::class, 'editKaryawan'])->name('editKaryawan')->middleware('auth');
 Route::get('/addPoint', [KaryawanController::class, 'addPoint'])->name('addPoint')->middleware('auth');
 
 Route::get('/discount', [DiscountController::class, 'index'])->name('discount')->middleware('auth');
@@ -548,6 +550,8 @@ Route::get('/setOrang', [SetOrangController::class, 'index'])->name('setOrang');
 Route::post('/editSetOrang', [SetOrangController::class, 'edit'])->name('editSetOrang');
 Route::post('/edit_persen', [SetOrangController::class, 'edit_persen'])->name('edit_persen');
 Route::post('/edit_menit', [SetOrangController::class, 'edit_menit'])->name('edit_menit');
+Route::post('/insert_shift', [SetOrangController::class, 'insert_shift'])->name('insert_shift');
+Route::get('/delete_shift', [SetOrangController::class, 'delete_shift'])->name('delete_shift');
 // ------------------------------
 
 
@@ -630,4 +634,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/save_klasifikasi', [KlasifikasiPembayaranController::class, 'save_klasifikasi'])->name('save_klasifikasi');
     Route::get('/delete_klasifikasi', [KlasifikasiPembayaranController::class, 'delete_klasifikasi'])->name('delete_klasifikasi');
     Route::get('/delete_akun_pembayaran', [KlasifikasiPembayaranController::class, 'delete_akun_pembayaran'])->name('delete_akun_pembayaran');
+
+    Route::get('/absenBaru', [AbsenBaru::class, 'index'])->name('absenBaru');
+    Route::get('/get_absen', [AbsenBaru::class, 'get_absen'])->name('get_absen');
+    Route::get('/save_absen_baru', [AbsenBaru::class, 'save_absen_baru'])->name('save_absen_baru');
 });

@@ -10,6 +10,9 @@ class Kasbon extends Model
     use HasFactory;
     protected $table = 'tb_kasbon';
     protected $fillable = [
-        'nm_karyawan', 'nominal', 'tgl', 'admin'
+        'id_karyawan',
+        'nominal',
+        'tgl',
+        'admin'
     ];
 }

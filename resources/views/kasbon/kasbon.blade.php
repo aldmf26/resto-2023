@@ -23,12 +23,12 @@
                                 <h5 class="float-left">Data Kasbon</h5>
                                 <a href="" data-toggle="modal" data-target="#tambah"
                                     class="btn btn-info btn-sm float-right"><i class="fas fa-plus"></i> Tambah kasbon</a>
-                                <a href="{{route('printKasbon', ['tgl1' => $tgl1, 'tgl2' => $tgl2])}}"
+                                <a href="{{ route('printKasbon', ['tgl1' => $tgl1, 'tgl2' => $tgl2]) }}"
                                     class="btn btn-info btn-sm float-right mr-2"><i class="fas fa-print"></i> Print
                                     kasbon</a>
                                 <a href="#" data-toggle="modal" data-target="#view"
                                     class="btn btn-info btn-sm float-right mr-2"><i class="fas fa-eye"></i> View
-                                    </a>
+                                </a>
                             </div>
                             <div class="card-body">
                                 <div id="table_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
@@ -42,12 +42,12 @@
                                                         <th>No</th>
                                                         <th>Nama</th>
                                                         @php
-                                                        $ttl = 0;
-                                                            foreach($kasbon as $k) {
+                                                            $ttl = 0;
+                                                            foreach ($kasbon as $k) {
                                                                 $ttl += $k->nominal;
                                                             }
                                                         @endphp
-                                                        <th>Nominal (Rp. {{number_format($ttl,0)}})</th>
+                                                        <th>Nominal (Rp. {{ number_format($ttl, 0) }})</th>
                                                         <th>Tanggal</th>
                                                         <th>Admin</th>
                                                         <th>Aksi</th>
@@ -60,12 +60,13 @@
                                                     @foreach ($kasbon as $k)
                                                         <tr class="odd">
                                                             <td class="sorting_1">{{ $no++ }}</td>
-                                                            <td>{{ ucwords(Str::lower($k->nm_karyawan)) }}</td>
+                                                            <td>{{ ucwords(Str::lower($k->nama)) }}</td>
                                                             <td>{{ number_format($k->nominal, 0) }}</td>
                                                             <td>{{ $k->tgl }}</td>
                                                             <td>{{ ucwords(Str::lower($k->admin)) }}</td>
                                                             <td>
-                                                                <a href="" data-target="#edit_data{{ $k->id_kasbon }}"
+                                                                <a href=""
+                                                                    data-target="#edit_data{{ $k->id_kasbon }}"
                                                                     data-toggle="modal" class="btn btn-sm btn-warning"><i
                                                                         class="fas fa-edit"></i></a>
                                                                 <a href="{{ route('deleteKasbon', ['id_kasbon' => $k->id_kasbon]) }}"
@@ -125,7 +126,7 @@
         </div>
     </form>
     {{-- print --}}
-   
+
     {{-- ------------------------------------ --}}
     <form action="{{ route('addKasbon') }}" method="post" accept-charset="utf-8">
         @csrf
@@ -152,10 +153,10 @@
                         <div class="row">
                             <div class="col-lg-5">
                                 <label for="">Nama</label>
-                                <select name="nama[]" id="" class="form-control">
+                                <select name="id_karyawan[]" id="" class="form-control">
                                     <option value="">-Pilih Karyawan-</option>
                                     @foreach ($karyawan as $k)
-                                        <option value="{{ $k->nama }}">{{ $k->nama }}</option>
+                                        <option value="{{ $k->id_karyawan }}">{{ $k->nama }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -194,23 +195,25 @@
                             <div class="row">
                                 <div class="col-lg-5">
                                     <label for="">Tanggal</label>
-                                    <input type="date" class="form-control" name="tgl" value="{{ $k->tgl }}">
+                                    <input type="date" class="form-control" name="tgl"
+                                        value="{{ $k->tgl }}">
                                 </div>
 
                                 <div class="col-lg-4">
                                     <label for="">Karyawan</label>
-                                    <select name="nama" id="" class="form-control">
-                                        <option value="{{ $k->nm_karyawan }}">{{ $k->nm_karyawan }}</option>
+                                    <select name="id_karyawan" id="" class="form-control">
+                                        <option value="{{ $k->id_karyawan }}">{{ $k->nama }}</option>
                                         @foreach ($karyawan as $s)
-                                            <option value="{{ $s->nama }}"
-                                                {{ $s->nama == $k->nm_karyawan ? 'selected' : '' }}>
+                                            <option value="{{ $s->id_karyawan }}"
+                                                {{ $s->id_karyawan == $k->id_karyawan ? 'selected' : '' }}>
                                                 {{ $s->nama }}</option>
                                         @endforeach
                                     </select>
                                 </div>
                                 <div class="col-lg-3">
                                     <label for="">Nominal</label>
-                                    <input type="number" name="nominal" class="form-control" value="{{ $k->nominal }}">
+                                    <input type="number" name="nominal" class="form-control"
+                                        value="{{ $k->nominal }}">
                                 </div>
                                 <input type="hidden" name="admin" value="{{ $k->admin }}">
                             </div>

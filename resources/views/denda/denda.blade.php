@@ -24,8 +24,8 @@
                                 <h5 class="float-left">Data Denda</h5>
                                 <a href="" data-toggle="modal" data-target="#tambah"
                                     class="btn btn-info btn-sm float-right"><i class="fas fa-plus"></i> Tambah Data</a>
-                                <a href="#" data-toggle="modal" data-target="#print2" class="btn btn-info btn-sm float-right mr-2"><i
-                                        class="fas fa-print"></i> Export</a>
+                                <a href="#" data-toggle="modal" data-target="#print2"
+                                    class="btn btn-info btn-sm float-right mr-2"><i class="fas fa-print"></i> Export</a>
                                 <!--<a href="#" data-toggle="modal" data-target="#print" class="btn btn-info btn-sm float-right mr-2"><i-->
                                 <!--        class="fas fa-print"></i>Print</a>-->
                             </div>
@@ -52,7 +52,7 @@
                                                     @php
                                                         $no = 1;
                                                     @endphp
-                                                   @foreach ($denda as $d)
+                                                    @foreach ($denda as $d)
                                                         @php
                                                             if ($d->id_lokasi == 1) {
                                                                 $lokasi = 'TAKEMORI';
@@ -167,32 +167,36 @@
                                 <label class="btn btn-default btn-block" for="btnCheck-1">ALL</label>
                             </div>
                             <div class="col-lg-4">
-                                <input type="checkbox" name="id_karyawan[]" class="selectAll btn-check" value="0" id="btnCheck-1" autocomplete="off">
+                                <input type="checkbox" name="id_karyawan[]" class="selectAll btn-check" value="0"
+                                    id="btnCheck-1" autocomplete="off">
                             </div>
                         </div>
                         <div class="row">
                             @php
-                                $no=1;
+                                $no = 1;
                             @endphp
                             @foreach ($karyawan as $k)
-                            <div class="col-3">
-                                {{-- <label for="">Nama</label>
+                                <div class="col-3">
+                                    {{-- <label for="">Nama</label>
                                 <select name="nama" id="jenisExport" class="form-control select2bs4">
                                     <option value="0">ALL</option>
                                         @foreach ($karyawan as $k)
                                             <option value="{{ $k->nama }}">{{ $k->nama }}</option>
                                         @endforeach
                                 </select> --}}
-                                <label class="btn btn-default" for="btnCheck{{$no}}">{{ $k->nama }}</label>
-                                
-                            </div>
-                            <div class="col-lg-1">
-                                <input type="checkbox" name="id_karyawan[]" class="btn-check dicek" value="{{ $k->nama }}" id="btnCheck{{$no}}" autocomplete="off">
+                                    <label class="btn btn-default"
+                                        for="btnCheck{{ $no }}">{{ $k->nama }}</label>
 
-                            </div>
-                            @php
-                                $no++;
-                            @endphp
+                                </div>
+                                <div class="col-lg-1">
+                                    <input type="checkbox" name="id_karyawan[]" class="btn-check dicek"
+                                        value="{{ $k->nama }}" id="btnCheck{{ $no }}"
+                                        autocomplete="off">
+
+                                </div>
+                                @php
+                                    $no++;
+                                @endphp
                             @endforeach
                         </div>
                     </div>
@@ -204,7 +208,7 @@
         </div>
     </form>
     {{-- ------------------------------------ --}}
-    
+
     <form action="{{ route('addDenda') }}" method="post" accept-charset="utf-8">
         @csrf
         <div class="modal fade" id="tambah" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -229,10 +233,10 @@
                             <div class="col-6">
                                 <div class="form-group">
                                     <label for="list_kategori">Nama</label>
-                                    <select class="form-control" name="nama" id="">
+                                    <select class="form-control" name="id_karyawan" id="">
                                         <option>-- Pilih Nama --</option>
                                         @foreach ($karyawan as $k)
-                                            <option value="{{ $k->nama }}">{{ $k->nama }}</option>
+                                            <option value="{{ $k->id_karyawan }}">{{ $k->nama }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -277,18 +281,19 @@
                                 <div class="col-6">
                                     <div class="form-group">
                                         <label for="list_kategori">Tanggal</label>
-                                        <input class="form-control" type="date" name="tgl" value="{{ $k->tgl }}">
+                                        <input class="form-control" type="date" name="tgl"
+                                            value="{{ $k->tgl }}">
                                     </div>
                                 </div>
 
                                 <div class="col-6">
                                     <div class="form-group">
                                         <label for="list_kategori">Nama</label>
-                                        <select class="form-control" name="nama" id="">
-                                            <option value="{{ $k->nama }}">{{ $k->nama }}</option>
+                                        <select class="form-control" name="id_karyawan" id="">
+                                            <option value="{{ $k->id_karyawan }}">{{ $k->nama }}</option>
                                             @foreach ($karyawan as $s)
-                                                <option value="{{ $s->nama }}"
-                                                    {{ $s->nama == $k->nm_karyawan ? 'selected' : '' }}>
+                                                <option value="{{ $s->id_karyawan }}"
+                                                    {{ $s->id_karyawan == $k->id_karyawan ? 'selected' : '' }}>
                                                     {{ $s->nama }}</option>
                                             @endforeach
                                         </select>
@@ -326,23 +331,23 @@
 @endsection
 @section('script')
     <script>
-                $('.select2bs4').select2({
-                            theme: 'bootstrap4'
-                        });
+        $('.select2bs4').select2({
+            theme: 'bootstrap4'
+        });
     </script>
     <script>
-        $(document).ready(function () {
-            
-            $(".selectAll").click(function(){
-              
-                if($(this).is(':checked')) {
+        $(document).ready(function() {
+
+            $(".selectAll").click(function() {
+
+                if ($(this).is(':checked')) {
                     $(".dicek").attr("disabled", true);
                     $(".dicek").attr("checked", true);
                 } else {
                     $(".dicek").removeAttr("disabled", true);
                     $(".dicek").removeAttr("checked", true);
                 }
-                
+
             });
         });
     </script>

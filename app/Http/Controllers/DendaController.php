@@ -28,7 +28,7 @@ class DendaController extends Controller
             $data = [
                 'title' => 'Data Denda',
                 'logout' => $request->session()->get('logout'),
-                'denda' => Denda::whereBetween('tgl', [$dari, $sampai])->orderBy('id_denda', 'desc')->get(),
+                'denda' => DB::select("SELECT * FROM tb_denda as a left join tb_karyawan as b on b.id_karyawan = a.id_karyawan where a.tgl between '$dari' and ' $sampai'"),
                 'karyawan' => Karyawan::all(),
                 'jenis' => 'all'
             ];
@@ -39,10 +39,10 @@ class DendaController extends Controller
 
     public function addDenda(Request $r)
     {
-        $cek = Denda::where([['tgl', $r->tgl], ['nominal', $r->nominal], ['alasan', $r->alasan], ['nama', $r->nama]])->first();
+        $cek = Denda::where([['tgl', $r->tgl], ['nominal', $r->nominal], ['alasan', $r->alasan], ['id_karyawan', $r->id_karyawan]])->first();
         if (!$cek) {
             $data = [
-                'nama' => $r->nama,
+                'id_karyawan' => $r->id_karyawan,
                 'alasan' => $r->alasan,
                 'nominal' => $r->nominal,
                 'tgl' => $r->tgl,
@@ -59,7 +59,7 @@ class DendaController extends Controller
     public function editDenda(Request $request)
     {
         $data = [
-            'nama' => $request->nama,
+            'id_karyawan' => $request->id_karyawan,
             'alasan' => $request->alasan,
             'nominal' => $request->nominal,
             'tgl' => $request->tgl,
