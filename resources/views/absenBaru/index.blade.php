@@ -66,7 +66,7 @@
                                         </div>
                                         <div class="modal-body">
                                             <div class="row">
-                                                <div class="col-lg-6">
+                                                <div class="col-lg-12">
                                                     <label for="">Tanggal</label>
                                                     <input required class="form-control" type="date" name="tgl">
                                                 </div>
