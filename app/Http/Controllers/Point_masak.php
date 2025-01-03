@@ -420,6 +420,423 @@ class Point_masak extends Controller
 
     public function point_export_server(Request $r)
     {
+        $loc = 1;
+        $locSdb = 2;
+        $tgl1 = $r->tgl1 ?? date('Y-m-01');
+        $tgl2 = $r->tgl2 ?? date('Y-m-d');
+        $spreadsheet = new Spreadsheet();
+
+        $spreadsheet->createSheet();
+        $spreadsheet->setActiveSheetIndex(0);
+
+        $sheet3 = $spreadsheet->getActiveSheet();
+        $sheet3->setTitle('Summary');
+
+        $sheet3->getStyle('A1:F1')
+            ->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_TOP);
+        // lebar kolom
+        $sheet3->getColumnDimension('A')->setWidth(33);
+        $sheet3->getColumnDimension('B')->setWidth(20);
+        $sheet3->getColumnDimension('C')->setWidth(12);
+        $sheet3->getColumnDimension('D')->setWidth(17);
+        $sheet3->getColumnDimension('E')->setWidth(33);
+        $sheet3->getColumnDimension('F')->setWidth(22);
+        $sheet3->getColumnDimension('G')->setWidth(17);
+        $sheet3->getColumnDimension('H')->setWidth(21);
+        $sheet3->getColumnDimension('J')->setWidth(17);
+
+        $sheet3->mergeCells('A1:B1');
+        $sheet3->getStyle("A9:A18")->getFont()->setBold(true);
+        $sheet3->getStyle("A24:B24")->getFont()->setBold(true);
+        $sheet3->getStyle("A1")->getFont()->setBold(true);
+        $sheet3->getStyle("B9:B18")->getFont()->setBold(true);
+
+
+
+        $sheet3->mergeCells('E1:F1');
+        $sheet3->getStyle("E9:E18")->getFont()->setBold(true);
+        $sheet3->getStyle("E24:F24")->getFont()->setBold(true);
+        $sheet3->getStyle("E1")->getFont()->setBold(true);
+        $sheet3->getStyle("F9:F18")->getFont()->setBold(true);
+
+        $sheet3
+            ->setCellValue('A1', 'TAKEMORI ' . date('M d, Y', strtotime($tgl1)) . ' - ' . date('M d, Y', strtotime($tgl2)))
+            ->setCellValue('A2', 'Total Invoice (Total Org)')
+            ->setCellValue('A3', 'Rp/Invoice')
+            ->setCellValue('A4', 'Unit Food')
+            ->setCellValue('A5', 'Rp/Unit')
+            ->setCellValue('A6', 'Jumlah Pesanan Telat Masak 25 Menit')
+            ->setCellValue('A7', 'Jumlah Pesanan Telat Masak 20 Menit')
+            ->setCellValue('A8', 'Jumlah Pesanan Ontime Masak')
+            ->setCellValue('A9', 'REVENUE : ')
+            ->setCellValue('A10', 'Subtotal Dinein, take Away & Delivery')
+            ->setCellValue('A11', 'Service Charge')
+            ->setCellValue('A12', 'Pb1 Dinein, Takeaway & Delivery')
+            ->setCellValue('A13', 'Subtotal STK')
+            ->setCellValue('A14', 'Pb1 STK (subtotal stk / 11)')
+            ->setCellValue('A15', 'Subtotal gojek')
+            ->setCellValue('A16', 'pb1 gojek dine in & stk (80% dari subtotal / 11)')
+            ->setCellValue('A17', 'Total Pb1')
+            ->setCellValue('A18', 'Total Subtotal')
+            ->setCellValue('A19', 'CASH')
+            ->setCellValue('A20', 'BCA Debit')
+            ->setCellValue('A21', 'BCA Kredit')
+            ->setCellValue('A22', 'Mandiri Debit')
+            ->setCellValue('A23', 'Mandiri Kredit')
+            ->setCellValue('A24', 'Bri Debit')
+            ->setCellValue('A25', 'Bri Kredit')
+            ->setCellValue('A26', 'Total Total')
+            ->setCellValue('A27', 'Discount')
+            ->setCellValue('A28', 'Voucher')
+            ->setCellValue('A29', 'Rounding')
+            ->setCellValue('A30', 'Dp')
+            ->setCellValue('A31', 'Total Total + DP');
+
+        // soondobu
+        $sheet3
+            ->setCellValue('E1', 'SOONDOBU ' . date('M d, Y', strtotime($tgl1)) . ' - ' . date('M d, Y', strtotime($tgl2)))
+            ->setCellValue('E2', 'Total Invoice (Total Org)')
+            ->setCellValue('E3', 'Rp/Invoice')
+            ->setCellValue('E4', 'Unit Food')
+            ->setCellValue('E5', 'Rp/Unit')
+            ->setCellValue('E6', 'Jumlah Pesanan Telat Masak 25 Menit')
+            ->setCellValue('E7', 'Jumlah Pesanan Telat Masak 20 Menit')
+            ->setCellValue('E8', 'Jumlah Pesanan Ontime Masak')
+            ->setCellValue('E9', 'REVENUE : ')
+            ->setCellValue('E10', 'Subtotal Dinein, take Away & Delivery')
+            ->setCellValue('E11', 'Service Charge')
+            ->setCellValue('E12', 'Pb1 Dinein, Takeaway & Delivery')
+            ->setCellValue('E13', 'Subtotal STK')
+            ->setCellValue('E14', 'Pb1 STK (subtotal stk / 11)')
+            ->setCellValue('E15', 'Subtotal gojek')
+            ->setCellValue('E16', 'pb1 gojek dine in & stk (80% dari subtotal / 11)')
+            ->setCellValue('E17', 'Total Pb1')
+            ->setCellValue('E18', 'Total Subtotal')
+            ->setCellValue('E19', 'CASH')
+            ->setCellValue('E20', 'BCA Debit')
+            ->setCellValue('E21', 'BCA Kredit')
+            ->setCellValue('E22', 'Mandiri Debit')
+            ->setCellValue('E23', 'Mandiri Kredit')
+            ->setCellValue('E24', 'Bri Debit')
+            ->setCellValue('E25', 'Bri Kredit')
+            ->setCellValue('E26', 'Total Total')
+            ->setCellValue('E27', 'Discount')
+            ->setCellValue('E28', 'Voucher')
+            ->setCellValue('E29', 'Rounding')
+            ->setCellValue('E30', 'Dp')
+            ->setCellValue('E31', 'Total Total + DP');
+
+        $transaksiTkm = PointQuery::transaksi($loc, $tgl1, $tgl2);
+        $total_gojekTkm = PointQuery::getTotalGojek($loc, $tgl1, $tgl2);
+
+        $total_not_gojekTkm = PointQuery::getTotalNotGojek($loc, $tgl1, $tgl2);
+
+        $jml_telatTkm = PointQuery::jml_telat($loc, $tgl1, $tgl2);
+
+        $jml_telat20Tkm = PointQuery::jml_telat20($loc, $tgl1, $tgl2);
+
+        $jml_ontimeTkm = PointQuery::jml_ontime($loc, $tgl1, $tgl2);
+
+        $majoTkm = PointQuery::majo(1, $loc, $tgl1, $tgl2);
+
+        $majo_gojekTkm = PointQuery::majo(2, $loc, $tgl1, $tgl2);
+
+        $dpTkm = PointQuery::dp($loc, $tgl1, $tgl2);
+
+        $transaksiTkm = PointQuery::transaksi($loc, $tgl1, $tgl2);
+
+        $kategoriTkm = PointQuery::kategori($loc, $tgl1, $tgl2);
+
+        $gojekTkm = PointQuery::gojek($loc, $tgl1, $tgl2);
+
+        $voidTkm = PointQuery::void($loc, $tgl1, $tgl2);
+
+        $pb1_gojekTkm = (($total_gojekTkm->total + $majo_gojekTkm->bayar_majo) * 0.8) / 11;
+
+        $service_chargeTkm = $total_not_gojekTkm->total * 0.07;
+        $pb1_not_gojekTkm = ($total_not_gojekTkm->total  + $service_chargeTkm) * 0.1;
+
+        $total_totalTkm = $total_gojekTkm->total + $total_not_gojekTkm->total + $service_chargeTkm + $pb1_not_gojekTkm + $transaksiTkm->rounding;
+
+        $total_transaksiTkm = $transaksiTkm->rp + $transaksiTkm->tax + $transaksiTkm->ser + $transaksiTkm->rounding - $transaksiTkm->dp;
+        $kembalianTkm = $transaksiTkm->total_bayar - $total_transaksiTkm;
+        $kuranganTkm = $transaksiTkm->tax + $transaksiTkm->ser + $transaksiTkm->rounding - $transaksiTkm->dp;
+
+        $persenTkm = $jml_telatTkm->jml_telat > 0 ? round(($jml_telatTkm->jml_telat * 100) / ($jml_telatTkm->jml_telat + $jml_ontimeTkm->jml_ontime), 0) : 0;
+
+        $persen20Tkm = $jml_telatTkm->jml_telat > 0 ? round(($jml_telat20Tkm->jml_telat * 100) / ($jml_telat20Tkm->jml_telat + $jml_ontimeTkm->jml_ontime), 0) : 0;
+
+        $persenOntimeTkm = $jml_ontimeTkm->jml_ontime > 0 ? round(($jml_ontimeTkm->jml_ontime * 100) / ($jml_telatTkm->jml_telat + $jml_ontimeTkm->jml_ontime), 0) : 0;
+
+        // variabel soondobu
+        $total_gojekSdb = PointQuery::getTotalGojek($locSdb, $tgl1, $tgl2);
+
+        $total_not_gojekSdb = PointQuery::getTotalNotGojek($locSdb, $tgl1, $tgl2);
+
+        $jml_telatSdb = PointQuery::jml_telat($locSdb, $tgl1, $tgl2);
+
+        $jml_telat20Sdb = PointQuery::jml_telat20($locSdb, $tgl1, $tgl2);
+
+        $jml_ontimeSdb = PointQuery::jml_ontime($locSdb, $tgl1, $tgl2);
+
+        $majoSdb = PointQuery::majo(1, $locSdb, $tgl1, $tgl2);
+
+        $majo_gojekSdb = PointQuery::majo(2, $locSdb, $tgl1, $tgl2);
+
+        $dpSdb = PointQuery::dp($locSdb, $tgl1, $tgl2);
+
+        $transaksiSdb = PointQuery::transaksi($locSdb, $tgl1, $tgl2);
+
+        $kategoriSdb = PointQuery::kategori($locSdb, $tgl1, $tgl2);
+
+        $gojekSdb = PointQuery::gojek($locSdb, $tgl1, $tgl2);
+
+        $voidSdb =  PointQuery::void($locSdb, $tgl1, $tgl2);
+
+        $pb1_gojekSdb = (($total_gojekSdb->total + $majo_gojekSdb->bayar_majo) * 0.8) / 11;
+
+        $service_chargeSdb = $total_not_gojekSdb->total * 0.07;
+        $pb1_not_gojekSdb = ($total_not_gojekSdb->total  + $service_chargeSdb) * 0.1;
+
+        $total_totalSdb = $total_gojekSdb->total + $total_not_gojekSdb->total + $service_chargeSdb + $pb1_not_gojekSdb + $transaksiSdb->rounding;
+
+        $total_transaksiSdb = $transaksiSdb->rp + $transaksiSdb->tax + $transaksiSdb->ser + $transaksiSdb->rounding - $transaksiSdb->dp;
+        $kembalianSdb = $transaksiSdb->total_bayar - $total_transaksiSdb;
+        $kuranganSdb = $transaksiSdb->tax + $transaksiSdb->ser + $transaksiSdb->rounding - $transaksiSdb->dp;
+
+        $persenSdb = $jml_telatSdb->jml_telat > 0 ? round(($jml_telatSdb->jml_telat * 100) / ($jml_telatSdb->jml_telat + $jml_ontimeSdb->jml_ontime), 0) : 0;
+
+        $persen20Sdb = $jml_telatSdb->jml_telat > 0 ? round(($jml_telat20Sdb->jml_telat * 100) / ($jml_telat20Sdb->jml_telat + $jml_ontimeSdb->jml_ontime), 0) : 0;
+
+        $persenOntimeSdb = $jml_ontimeSdb->jml_ontime > 0 ? round(($jml_ontimeSdb->jml_ontime * 100) / ($jml_telatSdb->jml_telat + $jml_ontimeSdb->jml_ontime), 0) : 0;
+        $style = [
+            'borders' => [
+                'alignment' => [
+                    'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                    'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                ],
+                'allBorders' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN
+                ],
+            ],
+        ];
+        $styleSdb = [
+            'borders' => [
+                'alignment' => [
+                    'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                    'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                ],
+                'allBorders' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN
+                ],
+            ],
+        ];
+        $sheet3
+            ->setCellValue('B2', $transaksiTkm->ttl_invoice . "($transaksiTkm->orang)")
+            ->setCellValue('B3', round($total_totalTkm / $transaksiTkm->ttl_invoice, 0))
+            ->setCellValue('B4', $transaksiTkm->unit)
+            ->setCellValue('B5', round($total_totalTkm / $transaksiTkm->unit, 0));
+
+        $sheet3
+            ->setCellValue('B6', $jml_telatTkm->jml_telat . ' / ' . $persenTkm . ' %')
+            ->setCellValue('B7', $jml_telat20Tkm->jml_telat . ' / ' . $persen20Tkm . '%')
+            ->setCellValue('B8', $jml_ontimeTkm->jml_ontime . ' / ' . $persenOntimeTkm . '%')
+            ->setCellValue('B10', $total_not_gojekTkm->total)
+            ->setCellValue('B11', $service_chargeTkm)
+            ->setCellValue('B12', round($pb1_not_gojekTkm, 0))
+            ->setCellValue('B13', round($majoTkm->bayar_majo, 0))
+            ->setCellValue('B14', round($majoTkm->bayar_majo / 11, 0))
+            ->setCellValue('B15', round(($total_gojekTkm->total + $majo_gojekTkm->bayar_majo), 0))
+            ->setCellValue('B16', round($pb1_gojekTkm, 0))
+            ->setCellValue('B17', round($pb1_gojekTkm + $pb1_not_gojekTkm + ($majoTkm->bayar_majo * 0.1), 0))
+            ->setCellValue('B18', $total_not_gojekTkm->total + $majoTkm->bayar_majo + round($total_gojekTkm->total + $majo_gojekTkm->bayar_majo, 0) - $pb1_gojekTkm)
+            ->setCellValue('B19', $transaksiTkm->cash)
+            ->setCellValue('B20', $transaksiTkm->d_bca)
+            ->setCellValue('B21', $transaksiTkm->k_bca)
+            ->setCellValue('B22', $transaksiTkm->d_mandiri)
+            ->setCellValue('B23', $transaksiTkm->k_mandiri)
+            ->setCellValue('B24', $transaksiTkm->d_bri)
+            ->setCellValue('B25', $transaksiTkm->k_bri)
+            ->setCellValue('B26', $transaksiTkm->total_bayar)
+            ->setCellValue('B27', $transaksiTkm->discount)
+            ->setCellValue('B28', $transaksiTkm->voucher)
+            ->setCellValue('B29', $transaksiTkm->rounding)
+            ->setCellValue('B30', $transaksiTkm->dp)
+            ->setCellValue('B31', $transaksiTkm->dp  + $transaksiTkm->total_bayar);
+
+        // soondobu
+        $sheet3
+            ->setCellValue('F2', $transaksiSdb->ttl_invoice . "($transaksiSdb->orang)")
+            ->setCellValue('F3', round($total_totalSdb / $transaksiSdb->ttl_invoice, 0))
+            ->setCellValue('F4', $transaksiSdb->unit)
+            ->setCellValue('F5', round($total_totalSdb / $transaksiSdb->unit, 0));
+
+        $sheet3
+            ->setCellValue('F6', $jml_telatSdb->jml_telat . ' / ' . $persenSdb . ' %')
+            ->setCellValue('F7', $jml_telat20Sdb->jml_telat . ' / ' . $persen20Sdb . '%')
+            ->setCellValue('F8', $jml_ontimeSdb->jml_ontime . ' / ' . $persenOntimeSdb . '%')
+            ->setCellValue('F10', $total_not_gojekSdb->total)
+            ->setCellValue('F11', $service_chargeSdb)
+            ->setCellValue('F12', round($pb1_not_gojekSdb, 0))
+            ->setCellValue('F13', round($majoSdb->bayar_majo, 0))
+            ->setCellValue('F14', round($majoSdb->bayar_majo / 11, 0))
+            ->setCellValue('F15', round(($total_gojekSdb->total + $majo_gojekSdb->bayar_majo), 0))
+            ->setCellValue('F16', round($pb1_gojekSdb, 0))
+            ->setCellValue('F17', round($pb1_gojekSdb + $pb1_not_gojekSdb + ($majoSdb->bayar_majo * 0.1), 0))
+            ->setCellValue('F18', $total_not_gojekSdb->total + $majoSdb->bayar_majo + round($total_gojekSdb->total + $majo_gojekSdb->bayar_majo, 0) - $pb1_gojekSdb)
+            ->setCellValue('F19', $transaksiSdb->cash)
+            ->setCellValue('F20', $transaksiSdb->d_bca)
+            ->setCellValue('F21', $transaksiSdb->k_bca)
+            ->setCellValue('F22', $transaksiSdb->d_mandiri)
+            ->setCellValue('F23', $transaksiSdb->k_mandiri)
+            ->setCellValue('F24', $transaksiSdb->d_bri)
+            ->setCellValue('F25', $transaksiSdb->k_bri)
+            ->setCellValue('F26', $transaksiSdb->total_bayar)
+            ->setCellValue('F27', $transaksiSdb->discount)
+            ->setCellValue('F28', $transaksiSdb->voucher)
+            ->setCellValue('F29', $transaksiSdb->rounding)
+            ->setCellValue('F30', $transaksiSdb->dp)
+            ->setCellValue('F31', $transaksiSdb->dp  + $transaksiSdb->total_bayar);
+        $sheet3->getStyle('A2:B29')->applyFromArray($style);
+        $sheet3->getStyle('E2:F29')->applyFromArray($style);
+
+        $spreadsheet->createSheet();
+        $spreadsheet->setActiveSheetIndex(1);
+        $sheet4 = $spreadsheet->getActiveSheet();
+        $sheet4->setTitle('Data Laporan Penjualan Majo');
+
+        $komisiTkm = Http::get("https://majoo.ptagafood.com/api/laporan/takemori/$tgl1/$tgl2");
+        $laporanTkm = $komisiTkm['laporan'];
+        $komisiSdb = Http::get("https://majoo.ptagafood.com/api/laporan/soondobu/$tgl1/$tgl2");
+        $laporanSdb = $komisiSdb['laporan'];
+
+        $sheet4
+            ->setCellValue('A1', 'Takemori')
+            ->setCellValue('B1', 'No')
+            ->setCellValue('C1', 'Kategori')
+            ->setCellValue('D1', 'Nama Produk')
+            ->setCellValue('E1', 'Harga Satuan')
+            ->setCellValue('F1', 'Qty')
+            ->setCellValue('G1', 'Satuan')
+            ->setCellValue('H1', 'Total')
+
+            ->setCellValue('J1', 'Soondobu')
+            ->setCellValue('K1', 'No')
+            ->setCellValue('L1', 'Kategori')
+            ->setCellValue('M1', 'Nama Produk')
+            ->setCellValue('N1', 'Harga Satuan')
+            ->setCellValue('O1', 'Qty')
+            ->setCellValue('P1', 'Satuan')
+            ->setCellValue('Q1', 'Total');
+
+        $sheet4->getStyle("A1:H1")->getFont()->setBold(true);
+        $sheet4->getStyle("J1:Q1")->getFont()->setBold(true);
+        $kolap = 2;
+        $laporanTtlTkm = 0;
+        $laporanTtlSdb = 0;
+        foreach ($laporanTkm as $no => $d) {
+            $sheet4->setCellValue("B$kolap", $no + 1)
+                ->setCellValue("C$kolap", $d['nm_kategori'])
+                ->setCellValue("D$kolap", $d['nm_produk'])
+                ->setCellValue("E$kolap", $d['harga'])
+                ->setCellValue("F$kolap", $d['jlh'])
+                ->setCellValue("G$kolap", $d['satuan'])
+                ->setCellValue("H$kolap", $d['total']);
+            $kolap++;
+            $laporanTtlTkm += $d['total'];
+        }
+        $sheet4->setCellValue("G$kolap", 'TOTAL');
+        $sheet4->setCellValue("H$kolap", $laporanTtlTkm);
+        $sheet4->getStyle("G$kolap")->getFont()->setBold(true);
+        $sheet4->getStyle("H$kolap")->getFont()->setBold(true);
+        $kolapSdb = 2;
+        foreach ($laporanSdb as $no => $d) {
+            $sheet4->setCellValue("K$kolapSdb", $no + 1)
+                ->setCellValue("L$kolapSdb", $d['nm_kategori'])
+                ->setCellValue("M$kolapSdb", $d['nm_produk'])
+                ->setCellValue("N$kolapSdb", $d['harga'])
+                ->setCellValue("O$kolapSdb", $d['jlh'])
+                ->setCellValue("P$kolapSdb", $d['satuan'])
+                ->setCellValue("Q$kolapSdb", $d['total']);
+            $kolapSdb++;
+            $laporanTtlSdb += $d['total'];
+        }
+        $sheet4->setCellValue("P$kolapSdb", 'TOTAL');
+        $sheet4->setCellValue("Q$kolapSdb", $laporanTtlSdb);
+        $sheet4->getStyle("P$kolapSdb")->getFont()->setBold(true);
+        $sheet4->getStyle("Q$kolapSdb")->getFont()->setBold(true);
+
+        $batasLap = $kolap - 1;
+        $sheet4->getStyle('B1:H' . $batasLap)->applyFromArray($style);
+
+        $batasLapSdb = $kolapSdb - 1;
+        $sheet4->getStyle('K1:Q' . $batasLapSdb)->applyFromArray($style);
+
+
+
+
+        // Start Denda
+
+        $spreadsheet->createSheet();
+        $spreadsheet->setActiveSheetIndex(2);
+        $sheet6 = $spreadsheet->getActiveSheet();
+        $sheet6->setTitle('Denda');
+
+        $denda_kitchen = DB::select("SELECT a.nama, a.alasan, a.nominal
+        FROM tb_denda as a
+        Left join tb_karyawan as b on b.nama = a.nama
+        where b.id_status = '1' and a.tgl BETWEEN ' $tgl1' and ' $tgl2' and a.nominal != 0
+        order by a.nama ASC");
+
+        $denda_server = DB::select("SELECT a.nama, a.alasan, a.nominal
+        FROM tb_denda as a
+        Left join tb_karyawan as b on b.nama = a.nama
+        where b.id_status = '2' and a.tgl BETWEEN ' $tgl1' and ' $tgl2' and a.nominal != 0
+        order by a.nama ASC");
+
+        $sheet6
+            ->setCellValue('A1', 'Denda Kitchen')
+            ->setCellValue('A2', 'Nama')
+            ->setCellValue('B2', 'Alasan')
+            ->setCellValue('C2', 'Nominal')
+
+            ->setCellValue('E1', 'Denda Server')
+            ->setCellValue('E2', 'Nama')
+            ->setCellValue('F2', 'Alasan')
+            ->setCellValue('G2', 'Nominal');
+
+        $kolom_denda = 3;
+        foreach ($denda_kitchen as $d) {
+            $sheet6->setCellValue('A' . $kolom_denda, $d->nama);
+            $sheet6->setCellValue('B' . $kolom_denda, $d->alasan);
+            $sheet6->setCellValue('C' . $kolom_denda, $d->nominal);
+            $kolom_denda++;
+        }
+        $batasD = count($denda_kitchen) + 2;
+        $sheet6->getStyle('A2:C' . $batasD)->applyFromArray($styleSdb);
+
+        $kolom_denda2 = 3;
+        foreach ($denda_server as $s) {
+            $sheet6->setCellValue('E' . $kolom_denda2, $s->nama);
+            $sheet6->setCellValue('F' . $kolom_denda2, $s->alasan);
+            $sheet6->setCellValue('G' . $kolom_denda2, $s->nominal);
+            $kolom_denda2++;
+        }
+        $batasS = count($denda_server) + 2;
+        $sheet6->getStyle('E2:G' . $batasS)->applyFromArray($styleSdb);
+
+
+        $writer = new Xlsx($spreadsheet);
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="POINT KITCHEN TS.xlsx"');
+        header('Cache-Control: max-age=0');
+
+        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
+        $writer->save('php://output');
+    }
+
+    public function point_export_server2222(Request $r)
+    {
         $id_lokasi = $r->id_lokasi ?? 1;
 
         $tgl1 = $r->tgl1 ?? date('Y-m-01');
