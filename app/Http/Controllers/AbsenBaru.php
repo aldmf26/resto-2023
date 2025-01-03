@@ -51,11 +51,43 @@ class AbsenBaru extends Controller
         }
     }
 
-    public function openAbsen(Request $request)
+    public function print_absen(Request $request)
     {
+        $tgl1 = (int) date('d', strtotime($request->tgl1)); // Default ke 1
+        $tgl2 = (int) date('d', strtotime($request->tgl2)); // Default ke 26
+
+        $dates = range($tgl1, $tgl2);
+
         $data = [
-            'tgl' => $request->tgl,
+            'title' => 'Print Absen',
+            'tgl1' => $request->tgl1,
+            'tgl2' => $request->tgl2,
+            'logout' => $request->session()->get('logout'),
+            'karyawan' => DB::select("SELECT a.id_karyawan, a.nama FROM tb_karyawan as a"),
+            'dates' => $dates,
+            'tahun' => date('Y', strtotime($request->tgl1)),
+
         ];
-        DB::table('absennew')->where('tgl', $request->tgl)->delete();
+        return view('absenBaru.print_absen', $data);
+    }
+    public function export_absen(Request $request)
+    {
+        $tgl1 = (int) date('d', strtotime($request->tgl1)); // Default ke 1
+        $tgl2 = (int) date('d', strtotime($request->tgl2)); // Default ke 26
+
+        $dates = range($tgl1, $tgl2);
+
+        $data = [
+            'title' => 'Export Absen',
+            'tgl1' => $request->tgl1,
+            'tgl2' => $request->tgl2,
+            'logout' => $request->session()->get('logout'),
+            'karyawan' => DB::select("SELECT a.id_karyawan, a.nama FROM tb_karyawan as a"),
+            'dates' => $dates,
+            'tahun' => date('Y', strtotime($request->tgl1)),
+
+
+        ];
+        return view('absenBaru.export', $data);
     }
 }
