@@ -29,7 +29,7 @@ class AbsenBaru extends Controller
             left join (
                 SELECT * FROM absennew where tgl = '$request->tgl'
             ) as b on a.id_karyawan = b.karyawan_id
-            order by a.id_karyawan ASC
+            order by a.id_status ASC, a.nama ASC
             "),
             'shift' => DB::table('tb_shift')->get()
         ];
