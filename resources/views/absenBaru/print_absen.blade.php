@@ -55,7 +55,7 @@
                                         $absen = DB::selectOne("SELECT  b.ket 
                                         FROM absennew as a
                                         left join tb_shift as b on b.id_shift = a.shift_id
-                                        where a.karyawan_id = $k->id_karyawan and DAY(a.tgl) = '$date' and YEAR(a.tgl) = '$tahun' 
+                                        where a.karyawan_id = $k->id_karyawan and DAY(a.tgl) = '$date' and MONTH(a.tgl) = '$bulan' and YEAR(a.tgl) = '$tahun' 
                                         ");
                                     @endphp
                                     <td class="text-center">{{ $absen->ket ?? 'OFF' }}</td>

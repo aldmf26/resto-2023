@@ -67,6 +67,7 @@ class AbsenBaru extends Controller
             'karyawan' => DB::select("SELECT a.id_karyawan, a.nama FROM tb_karyawan as a"),
             'dates' => $dates,
             'tahun' => date('Y', strtotime($request->tgl1)),
+            'bulan' => date('m', strtotime($request->tgl1)),
 
         ];
         return view('absenBaru.print_absen', $data);
