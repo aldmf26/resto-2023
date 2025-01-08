@@ -73,12 +73,12 @@ class ApiInvoiceController extends Controller
         return response()->json($response);
     }
 
-    public function absenPrint(Request $id_karyawan, $date, $bulan, $tahun)
+    public function absenPrint(Request $r)
     {
         $absen = DB::selectOne("SELECT  b.ket 
                  FROM absennew as a
                  left join tb_shift as b on b.id_shift = a.shift_id
-                 where a.karyawan_id = $id_karyawan and DAY(a.tgl) = '$date' and MONTH(a.tgl) = '$bulan' and YEAR(a.tgl) = '$tahun'");
+                 where a.karyawan_id = $r->id_karyawan and DAY(a.tgl) = '$r->date' and MONTH(a.tgl) = '$r->bulan' and YEAR(a.tgl) = '$r->tahun'");
         $response = [
             'status' => 'success',
             'message' => 'Data Invoice berhasil diambil',
