@@ -63,7 +63,7 @@ class ApiInvoiceController extends Controller
             'tgl2' => $request->tgl2,
             'karyawan' => DB::select("SELECT a.id_karyawan, a.nama FROM tb_karyawan as a"),
             'dates' => $dates,
-            'tahun' => date('Y', strtotime($request->tgl1)),
+            'tahun' => empty($request->tgl1) ? date('Y') : date('Y', strtotime($request->tgl1)),
 
         ];
         return response()->json($response);
