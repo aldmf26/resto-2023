@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 
 class AbsenBaru extends Controller
 {
@@ -91,5 +92,30 @@ class AbsenBaru extends Controller
 
         ];
         return view('absenBaru.export', $data);
+    }
+
+    public function print_absen2(Request $request)
+    {
+        if (empty($request->tgl1)) {
+            $tgl1 = date('Y-m-01');
+            $tgl2 = date('Y-m-d');
+        } else {
+            $tgl1 = $request->tgl1;
+            $tgl2 = $request->tgl2;
+        }
+        $karyawan = Http::get("https://ptagafood.com/api/absenBaru?tgl1=$tgl1&tgl2=$tgl2");
+        $dt_karyawan = json_decode($karyawan, TRUE);
+
+
+        $data = [
+            'title' => 'Absen',
+            'tgl1' => $tgl1,
+            'tgl2' => $tgl2,
+            'logout' => $request->session()->get('logout'),
+            'karyawan' => $dt_karyawan['data']['karyawan'],
+            'dates' => $dt_karyawan['data']['dates'],
+        ];
+
+        return view('absenBaru.index2', $data);
     }
 }

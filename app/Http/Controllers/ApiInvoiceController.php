@@ -44,15 +44,8 @@ class ApiInvoiceController extends Controller
 
     public function absen(Request $request)
     {
-        if (empty($request->tgl1)) {
-            $tgldate1 = date('Y-m-01');
-            $tgldate2 = date('Y-m-d');
-            $tgl1 = (int) date('d', strtotime($tgldate1)); // Default ke 1
-            $tgl2 = (int) date('d', strtotime($tgldate2)); // Default ke 26
-        } else {
-            $tgl1 = (int) date('d', strtotime($request->tgl1)); // Default ke 1
-            $tgl2 = (int) date('d', strtotime($request->tgl2)); // Default ke 26
-        }
+        $tgl1 = (int) date('d', strtotime($request->tgl1));
+        $tgl2 = (int) date('d', strtotime($request->tgl2));
 
 
         $dates = range($tgl1, $tgl2);
@@ -83,7 +76,7 @@ class ApiInvoiceController extends Controller
             'status' => 'success',
             'message' => 'Data Absen berhasil diambil',
             'data' => [
-                'absen' => $absen,
+                'absen' => $absen->ket,
             ],
         ];
         return response()->json($response);

@@ -640,4 +640,5 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/print_absen', [AbsenBaru::class, 'print_absen'])->name('print_absen');
     Route::get('/export_absen', [AbsenBaru::class, 'export_absen'])->name('export_absen');
     Route::get('/save_absen_baru', [AbsenBaru::class, 'save_absen_baru'])->name('save_absen_baru');
+    Route::get('/print_absen2', [AbsenBaru::class, 'print_absen2'])->name('print_absen2');
 });
