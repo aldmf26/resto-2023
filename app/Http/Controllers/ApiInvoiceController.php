@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ApiInvoiceModel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ApiInvoiceController extends Controller
 {
@@ -37,6 +38,26 @@ class ApiInvoiceController extends Controller
             'data' => [
                 'menu' => $menu,
             ],
+        ];
+        return response()->json($response);
+    }
+
+    public function absen(Request $request)
+    {
+        $tgl1 = (int) date('d', strtotime($request->tgl1)); // Default ke 1
+        $tgl2 = (int) date('d', strtotime($request->tgl2)); // Default ke 26
+
+        $dates = range($tgl1, $tgl2);
+
+        $response = [
+            'title' => 'Print Absen',
+            'tgl1' => $request->tgl1,
+            'tgl2' => $request->tgl2,
+            'logout' => $request->session()->get('logout'),
+            'karyawan' => DB::select("SELECT a.id_karyawan, a.nama FROM tb_karyawan as a"),
+            'dates' => $dates,
+            'tahun' => date('Y', strtotime($request->tgl1)),
+
         ];
         return response()->json($response);
     }
