@@ -44,8 +44,16 @@ class ApiInvoiceController extends Controller
 
     public function absen(Request $request)
     {
-        $tgl1 = (int) date('d', strtotime($request->tgl1)); // Default ke 1
-        $tgl2 = (int) date('d', strtotime($request->tgl2)); // Default ke 26
+        if (empty($request->tgl1)) {
+            $tgldate1 = date('Y-m-01');
+            $tgldate2 = date('Y-m-d');
+            $tgl1 = (int) date('d', strtotime($tgldate1)); // Default ke 1
+            $tgl2 = (int) date('d', strtotime($tgldate2)); // Default ke 26
+        } else {
+            $tgl1 = (int) date('d', strtotime($request->tgl1)); // Default ke 1
+            $tgl2 = (int) date('d', strtotime($request->tgl2)); // Default ke 26
+        }
+
 
         $dates = range($tgl1, $tgl2);
 
