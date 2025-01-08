@@ -81,7 +81,7 @@ class ApiInvoiceController extends Controller
                  where a.karyawan_id = $r->id_karyawan and DAY(a.tgl) = '$r->date' and MONTH(a.tgl) = '$r->bulan' and YEAR(a.tgl) = '$r->tahun'");
         $response = [
             'status' => 'success',
-            'message' => 'Data Invoice berhasil diambil',
+            'message' => 'Data Absen berhasil diambil',
             'data' => [
                 'absen' => $absen,
             ],
