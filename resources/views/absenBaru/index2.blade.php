@@ -25,18 +25,18 @@
                                     </thead>
                                     <tbody>
                                         @foreach ($karyawan as $no => $k)
-                                            @php
-                                                $absen = Http::get(
-                                                    'https://ptagafood.com/api/absenPrint?id_karyawan1=&date=7&bulan=1&tahun=2025',
-                                                );
-                                                $dt_absen = json_decode($absen, true);
-
-                                            @endphp
                                             <tr>
                                                 <td>{{ $no + 1 }}</td>
                                                 <td class="text-nowrap">{{ $k['nama'] }}</td>
                                                 @foreach ($dates as $date)
-                                                    <td class="text-center">{{ $date }}</td>
+                                                    @php
+                                                        $absen = Http::get(
+                                                            'https://ptagafood.com/api/absenPrint?id_karyawan=1&date=1&bulan=1&tahun=2025',
+                                                        );
+                                                        $dt_absen = json_decode($absen, true);
+
+                                                    @endphp
+                                                    <td class="text-center">{{ $dt_absen['data']['absen'] }}</td>
                                                 @endforeach
                                             </tr>
                                         @endforeach

@@ -106,6 +106,13 @@ class AbsenBaru extends Controller
         $karyawan = Http::get("https://ptagafood.com/api/absenBaru?tgl1=$tgl1&tgl2=$tgl2");
         $dt_karyawan = json_decode($karyawan, TRUE);
 
+        // $absen = Http::get(
+        //     'https://ptagafood.com/api/absenPrint?id_karyawan=1&date=7&bulan=1&tahun=2025',
+        // );
+        // $dt_absen = json_decode($absen, true);
+
+
+
 
         $data = [
             'title' => 'Absen',
