@@ -53,7 +53,6 @@ class ApiInvoiceController extends Controller
             'title' => 'Print Absen',
             'tgl1' => $request->tgl1,
             'tgl2' => $request->tgl2,
-            'logout' => $request->session()->get('logout'),
             'karyawan' => DB::select("SELECT a.id_karyawan, a.nama FROM tb_karyawan as a"),
             'dates' => $dates,
             'tahun' => date('Y', strtotime($request->tgl1)),
