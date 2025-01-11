@@ -106,13 +106,19 @@ class AbsenBaru extends Controller
         $karyawan = Http::get("https://ptagafood.com/api/absenBaru?tgl1=$tgl1&tgl2=$tgl2");
         $dt_karyawan = json_decode($karyawan, TRUE);
 
-        // $absen = Http::get(
-        //     'https://ptagafood.com/api/absenPrint?id_karyawan=1&date=7&bulan=1&tahun=2025',
-        // );
-        // $dt_absen = json_decode($absen, true);
+        $absen = Http::get("https://ptagafood.com/api/absenPrint?tgl1=$tgl1&tgl2=$tgl2",);
+        $dt_absen = json_decode($absen, true);
 
+        DB::table('absennew')->whereBetween('tgl', [$tgl1, $tgl2])->delete();
 
-
+        foreach ($dt_absen['data']['absen'] as $a) {
+            $data = [
+                'karyawan_id' => $a['karyawan_id'],
+                'tgl' => $a['tgl'],
+                'shift_id' => $a['shift_id'],
+            ];
+            DB::table('absennew')->insert($data);
+        }
 
         $data = [
             'title' => 'Absen',
@@ -121,6 +127,8 @@ class AbsenBaru extends Controller
             'logout' => $request->session()->get('logout'),
             'karyawan' => $dt_karyawan['data']['karyawan'],
             'dates' => $dt_karyawan['data']['dates'],
+            'tahun' => empty($request->tgl1) ? date('Y') : date('Y', strtotime($request->tgl1)),
+            'bulan' => empty($request->tgl1) ? date('m') : date('m', strtotime($request->tgl1)),
         ];
 
         return view('absenBaru.index2', $data);
