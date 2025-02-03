@@ -775,55 +775,55 @@ class Point_masak extends Controller
 
 
 
-        // Start Denda
+        // // Start Denda
 
-        $spreadsheet->createSheet();
-        $spreadsheet->setActiveSheetIndex(2);
-        $sheet6 = $spreadsheet->getActiveSheet();
-        $sheet6->setTitle('Denda');
+        // $spreadsheet->createSheet();
+        // $spreadsheet->setActiveSheetIndex(2);
+        // $sheet6 = $spreadsheet->getActiveSheet();
+        // $sheet6->setTitle('Denda');
 
-        $denda_kitchen = DB::select("SELECT a.nama, a.alasan, a.nominal
-        FROM tb_denda as a
-        Left join tb_karyawan as b on b.nama = a.nama
-        where b.id_status = '1' and a.tgl BETWEEN ' $tgl1' and ' $tgl2' and a.nominal != 0
-        order by a.nama ASC");
+        // $denda_kitchen = DB::select("SELECT a.nama, a.alasan, a.nominal
+        // FROM tb_denda as a
+        // Left join tb_karyawan as b on b.nama = a.nama
+        // where b.id_status = '1' and a.tgl BETWEEN ' $tgl1' and ' $tgl2' and a.nominal != 0
+        // order by a.nama ASC");
 
-        $denda_server = DB::select("SELECT a.nama, a.alasan, a.nominal
-        FROM tb_denda as a
-        Left join tb_karyawan as b on b.nama = a.nama
-        where b.id_status = '2' and a.tgl BETWEEN ' $tgl1' and ' $tgl2' and a.nominal != 0
-        order by a.nama ASC");
+        // $denda_server = DB::select("SELECT a.nama, a.alasan, a.nominal
+        // FROM tb_denda as a
+        // Left join tb_karyawan as b on b.nama = a.nama
+        // where b.id_status = '2' and a.tgl BETWEEN ' $tgl1' and ' $tgl2' and a.nominal != 0
+        // order by a.nama ASC");
 
-        $sheet6
-            ->setCellValue('A1', 'Denda Kitchen')
-            ->setCellValue('A2', 'Nama')
-            ->setCellValue('B2', 'Alasan')
-            ->setCellValue('C2', 'Nominal')
+        // $sheet6
+        //     ->setCellValue('A1', 'Denda Kitchen')
+        //     ->setCellValue('A2', 'Nama')
+        //     ->setCellValue('B2', 'Alasan')
+        //     ->setCellValue('C2', 'Nominal')
 
-            ->setCellValue('E1', 'Denda Server')
-            ->setCellValue('E2', 'Nama')
-            ->setCellValue('F2', 'Alasan')
-            ->setCellValue('G2', 'Nominal');
+        //     ->setCellValue('E1', 'Denda Server')
+        //     ->setCellValue('E2', 'Nama')
+        //     ->setCellValue('F2', 'Alasan')
+        //     ->setCellValue('G2', 'Nominal');
 
-        $kolom_denda = 3;
-        foreach ($denda_kitchen as $d) {
-            $sheet6->setCellValue('A' . $kolom_denda, $d->nama);
-            $sheet6->setCellValue('B' . $kolom_denda, $d->alasan);
-            $sheet6->setCellValue('C' . $kolom_denda, $d->nominal);
-            $kolom_denda++;
-        }
-        $batasD = count($denda_kitchen) + 2;
-        $sheet6->getStyle('A2:C' . $batasD)->applyFromArray($styleSdb);
+        // $kolom_denda = 3;
+        // foreach ($denda_kitchen as $d) {
+        //     $sheet6->setCellValue('A' . $kolom_denda, $d->nama);
+        //     $sheet6->setCellValue('B' . $kolom_denda, $d->alasan);
+        //     $sheet6->setCellValue('C' . $kolom_denda, $d->nominal);
+        //     $kolom_denda++;
+        // }
+        // $batasD = count($denda_kitchen) + 2;
+        // $sheet6->getStyle('A2:C' . $batasD)->applyFromArray($styleSdb);
 
-        $kolom_denda2 = 3;
-        foreach ($denda_server as $s) {
-            $sheet6->setCellValue('E' . $kolom_denda2, $s->nama);
-            $sheet6->setCellValue('F' . $kolom_denda2, $s->alasan);
-            $sheet6->setCellValue('G' . $kolom_denda2, $s->nominal);
-            $kolom_denda2++;
-        }
-        $batasS = count($denda_server) + 2;
-        $sheet6->getStyle('E2:G' . $batasS)->applyFromArray($styleSdb);
+        // $kolom_denda2 = 3;
+        // foreach ($denda_server as $s) {
+        //     $sheet6->setCellValue('E' . $kolom_denda2, $s->nama);
+        //     $sheet6->setCellValue('F' . $kolom_denda2, $s->alasan);
+        //     $sheet6->setCellValue('G' . $kolom_denda2, $s->nominal);
+        //     $kolom_denda2++;
+        // }
+        // $batasS = count($denda_server) + 2;
+        // $sheet6->getStyle('E2:G' . $batasS)->applyFromArray($styleSdb);
 
 
         $writer = new Xlsx($spreadsheet);
