@@ -28,6 +28,9 @@
                                 <a href="{{ route('gajiExport', ['tgl1' => $tgl1, 'tgl2' => $tgl2]) }}"
                                     class="btn btn-info btn-sm float-right mr-2"><i class="fas fa-file-excel"></i>
                                     Export</a>
+                                <a href="{{ route('point_export_server', ['id_lokasi' => 1, 'tgl1' => $tgl1, 'tgl2' => $tgl2]) }}"
+                                    class="btn btn-info btn-sm float-right mr-2"><i class="fas fa-file-excel"></i>
+                                    Export Omset</a>
                             </div>
                             @include('flash.flash')
                             <div class="card-body">
