@@ -10,7 +10,6 @@
             border: 1px solid yellow;
             opacity: 1;
         }
-
     </style>
     <div class="content-wrapper" style="min-height: 511px;">
         <!-- Content Header (Page header) -->
@@ -88,7 +87,7 @@
                                                                     $posisi = 'Head Chef';
                                                                 } elseif ($u->id_posisi == 4) {
                                                                     $posisi = 'Head Server';
-                                                                } elseif($u->id_posisi == 5) {
+                                                                } elseif ($u->id_posisi == 5) {
                                                                     $posisi = 'Server';
                                                                 } else {
                                                                     $posisi = 'Presiden';
@@ -101,7 +100,9 @@
                                                                 <td>{{ $posisi }}</td>
                                                                 <td>Aktif</td>
                                                                 <td>
-                                                                    <a class="btn btn-success" href="#" data-toggle="modal" data-target="#edit{{$u->id}}">edit</a>
+                                                                    <a class="btn btn-success" href="#"
+                                                                        data-toggle="modal"
+                                                                        data-target="#edit{{ $u->id }}">edit</a>
                                                                     <a href="#permission{{ $u->id }}"
                                                                         data-toggle="modal"
                                                                         class="btn btn-new permission"><i
@@ -132,54 +133,58 @@
 
         <!-- /.content -->
     </div>
-   @foreach ($users as $u)
-    <form action="{{ route('editUsers') }}" method="post" accept-charset="utf-8">
-        @csrf
-        <div class="modal fade" id="edit{{$u->id}}" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg-max" role="document">
-                <div class="modal-content ">
-                    <div class="modal-header btn-costume">
-                        <h5 class="modal-title text-light" id="exampleModalLabel">Tambah Users</h5>
+    @foreach ($users as $u)
+        <form action="{{ route('editUsers') }}" method="post" accept-charset="utf-8">
+            @csrf
+            <div class="modal fade" id="edit{{ $u->id }}" role="dialog" aria-labelledby="exampleModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-lg-max" role="document">
+                    <div class="modal-content ">
+                        <div class="modal-header btn-costume">
+                            <h5 class="modal-title text-light" id="exampleModalLabel">Tambah Users</h5>
 
-                        <button type="button" class="close text-light" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row">
-
-                            <input type="hidden" name="id" value="{{$u->id}}">
-                            <div class="col-12">
-                                <div class="form-group">
-                                    <label for="list_kategori">Nama</label>
-                                    <input class="form-control" value="{{$u->nama}}" type="text" name="nama">
-                                </div>
-                            </div>
-
-                            <div class="col-12">
-                                <div class="form-group">
-                                    <label for="list_kategori">Username</label>
-                                    <input class="form-control" value="{{$u->username}}" type="text" name="username">
-                                </div>
-                            </div>
-
-                            <div class="col-12">
-                                <div class="form-group">
-                                    <label for="list_kategori">Password</label>
-                                    <input class="form-control" value="{{$u->password}}" type="password" name="password">
-                                </div>
-                            </div>
-
+                            <button type="button" class="close text-light" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
                         </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-costume" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-success">Save</button>
+                        <div class="modal-body">
+                            <div class="row">
+
+                                <input type="hidden" name="id" value="{{ $u->id }}">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="list_kategori">Nama</label>
+                                        <input class="form-control" value="{{ $u->nama }}" type="text"
+                                            name="nama">
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="list_kategori">Username</label>
+                                        <input class="form-control" value="{{ $u->username }}" type="text"
+                                            name="username">
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="list_kategori">Password</label>
+                                        <input class="form-control" value="{{ $u->password }}" type="password"
+                                            name="password">
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-costume" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-success">Save</button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </form>
+        </form>
     @endforeach
     <form action="{{ route('addUsers') }}" method="post" accept-charset="utf-8">
         @csrf
@@ -221,14 +226,15 @@
                             <div class="col-12">
                                 <div class="form-group">
                                     <label for="list_kategori">posisi</label>
-                                    <select name="posisi" id="" class="form-control">
+                                    {{-- <select name="posisi" id="" class="form-control">
                                         @foreach ($tb_posisi as $i)
                                             <?php if($i->id_posisi == 1 || $i->id_posisi == 2 || $i->id_posisi == 5 || $i->id_posisi == 6){ ?>
                                             <option value="{{ $i->id_posisi }}">{{ $i->nm_posisi }}</option>
                                             <?php } ?>
                                             
                                         @endforeach
-                                    </select>
+                                    </select> --}}
+                                    <input type="hidden" name="posisi" value="5">
                                 </div>
                             </div>
 
@@ -298,7 +304,12 @@
                                         ->get();
                                     $permisi = DB::table('tb_permission')
                                         ->select('tb_permission.id_user')
-                                        ->join('tb_sub_navbar', 'tb_permission.id_menu', '=', 'tb_sub_navbar.id_sub_navbar')
+                                        ->join(
+                                            'tb_sub_navbar',
+                                            'tb_permission.id_menu',
+                                            '=',
+                                            'tb_sub_navbar.id_sub_navbar',
+                                        )
                                         ->join('users', 'tb_permission.id_user', '=', 'users.id')
                                         ->where('id_user', $k->id)
                                         ->orderBy('id_user')
@@ -649,9 +660,7 @@
 
                             <input type="hidden" name="jenis" value="{{ $jenis }}">
                             @php
-                                $sub_navbar = DB::table('tb_sub_navbar')
-                                    ->orderBy('urutan', 'asc')
-                                    ->get();
+                                $sub_navbar = DB::table('tb_sub_navbar')->orderBy('urutan', 'asc')->get();
                             @endphp
                             @foreach ($sub_navbar as $sb)
                                 <div class="col-3">

@@ -1016,6 +1016,8 @@ Route::get('laporan/{id_lokasi}/{tgl1}/{tgl2}', function ($id_lokasi, $tgl1, $tg
 });
 Route::get('/invoice_nanda', [ApiInvoiceController::class, 'invoice'])->name('invoice_nanda');
 Route::get('/menu', [ApiInvoiceController::class, 'menu'])->name('menu');
+Route::get('/absenBaru', [ApiInvoiceController::class, 'absen'])->name('absenBaru');
+Route::get('/absenPrint', [ApiInvoiceController::class, 'absenPrint'])->name('absenPrint');
 
 
 Route::post('api_tes', function (r $b) {

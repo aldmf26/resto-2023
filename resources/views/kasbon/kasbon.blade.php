@@ -243,7 +243,7 @@
                 var html_code = "<div class='row' id='row" + count + "'>";
 
                 html_code +=
-                    ' <div class="col-5 mt-2"><select name="nama[]" id="" class="form-control select"> @foreach ($karyawan as $k)<option value="{{ $k->nama }}">{{ $k->nama }}</option>@endforeach</select></div>';
+                    ' <div class="col-5 mt-2"><select name="id_karyawan[]" id="" class="form-control select"> @foreach ($karyawan as $k)<option value="{{ $k->id_karyawan }}">{{ $k->nama }}</option>@endforeach</select></div>';
 
                 html_code +=
                     ' <div class="col-5 mt-2"><input type="number" name="nominal[]" class="form-control"></div>';
