@@ -28,7 +28,7 @@
                 @foreach ($cekadm as $c)
                     <?php if($c->jenis == 'navbar'){ ?>
                     @php
-                        if (!in_array($id_user, $arr)) {
+                        if (!in_array(213213, $arr)) {
                             if ($c->sub_navbar == 'Kom Server' || $c->sub_navbar == 'Point Kitchen') {
                                 continue;
                             }
