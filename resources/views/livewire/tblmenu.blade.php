@@ -1,6 +1,6 @@
 <div>
 
-    <table class="table  " id="cek">
+    <table class="table  ">
         <thead>
             <tr>
                 <th>No</th>
@@ -70,5 +70,5 @@
         </tbody>
 
     </table>
-    {{-- {{ $menu->appends(['id_lokasi' => $id_lokasi])->links() }} --}}
+    {{ $menu->appends(['id_lokasi' => $id_lokasi])->links() }}
 </div>
