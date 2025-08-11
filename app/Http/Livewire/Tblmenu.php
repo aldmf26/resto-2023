@@ -25,7 +25,7 @@ class Tblmenu extends Component
             )
             ->where('tb_menu.lokasi', $this->id_lokasi)
             ->orderBy('tb_menu.id_menu', 'DESC')
-            ->paginate(10);
+            ->get();
 
         return view('livewire.tblmenu', [
             'menu' => $menu,
