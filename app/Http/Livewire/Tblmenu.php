@@ -10,6 +10,18 @@ class Tblmenu extends Component
     public $id_lokasi;
     public $keyword; // Add keyword property for search
 
+    public function toggleActive($id_menu)
+    {
+        $menu = Menu::find($id_menu);
+        if ($menu) {
+            $menu->aktif = $menu->aktif == 'on' ? 'off' : 'on';
+            $menu->save();
+            $this->emit('refreshTable');  // Refresh table setelah toggle
+            session()->flash('sukses', 'Status menu berhasil diubah!');
+        }
+    }
+    
+
     public function render()
     {
         $menu = Menu::with(['harga.distribusi'])  // Eager load harga dan relasi distribusi

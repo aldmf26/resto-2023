@@ -50,12 +50,11 @@
                     </td>
                     <td>
                         <label class="switch float-left">
-                            <input type="checkbox" class="form-checkbox1" id="form-checkbox"
-                                id_checkbox="{{ $m->id_menu }}" {{ $m->aktif == 'on' ? 'checked' : '' }}>
+                            <input type="checkbox" wire:change="toggleActive({{ $m->id_menu }})" class="form-checkbox1"
+                                {{ $m->aktif == 'on' ? 'checked' : '' }}>
                             <span class="slider round"></span>
                         </label>
-                        <input name="monitor"
-                            class="swalDefaultSuccess form-password nilai{{ $m->id_menu }} form-control"
+                        <input name="monitor" class="swalDefaultSuccess form-password nilai{{ $m->id_menu }} form-control"
                             value="{{ $m->aktif }}" hidden>
                     </td>
                     <td style="white-space: nowrap;">
