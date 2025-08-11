@@ -70,5 +70,5 @@
         </tbody>
 
     </table>
-    {{ $menu->links() }}
+    {{-- {{ $menu->links() }} --}}
 </div>
