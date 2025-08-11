@@ -1,4 +1,6 @@
 <div>
+    <input type="text" wire:model="keyword" placeholder="Cari Menu..." class="form-control"
+        id="search_field" name="keyword" autofocus><br>
 
     <table class="table  ">
         <thead>
@@ -43,7 +45,8 @@
                             :{{ number_format($h->harga, 0) }} <br>
                         @endforeach
                         <a href="#" id_menu="{{ $m->id_menu }}" class="btn btn-new btnPlusDistribusi"
-                            style="background-color: #F7F7F7;"><i style="color: #B0BEC5;"><i class="fas fa-plus"></i></a>
+                            style="background-color: #F7F7F7;"><i style="color: #B0BEC5;"><i
+                                    class="fas fa-plus"></i></a>
                     </td>
                     <td>
                         <label class="switch float-left">

@@ -8,6 +8,7 @@ use Livewire\Component;
 class Tblmenu extends Component
 {
     public $id_lokasi;
+    public $keyword; // Add keyword property for search
 
     public function render()
     {
@@ -24,6 +25,9 @@ class Tblmenu extends Component
                 'tb_station.nm_station'  // Field dari station
             )
             ->where('tb_menu.lokasi', $this->id_lokasi)
+            ->when($this->keyword, function ($query) {
+                $query->where('tb_menu.nama', 'like', '%' . $this->keyword . '%');  // Search by keyword
+            })
             ->orderBy('tb_menu.id_menu', 'DESC')
             ->get();
 
