@@ -3,6 +3,7 @@
 namespace App\Http\Livewire;
 
 use App\Models\Menu;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class Tblmenu extends Component
@@ -19,6 +20,20 @@ class Tblmenu extends Component
             $this->emit('refreshTable');  // Refresh table setelah toggle
             session()->flash('sukses', 'Status menu berhasil diubah!');
         }
+    }
+
+    public function addDistribusi($id_menu)
+    {
+        // Logika tambah distribusi (asumsi sederhana, bisa extend dengan modal)
+        // Misalnya, buka modal via emit, atau langsung insert jika data dikirim
+        // Contoh sederhana: Tambah distribusi default
+        DB::table('tb_harga')->insert([
+            'id_menu' => $id_menu,
+            'id_distribusi' => 1,  // Default distribusi, ganti sesuai
+            'harga' => 0,  // Default harga
+        ]);
+        $this->emit('refreshTable');
+        session()->flash('sukses', 'Distribusi berhasil ditambahkan!');
     }
 
 

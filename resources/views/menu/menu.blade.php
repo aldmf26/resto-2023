@@ -61,16 +61,16 @@
                             @include('flash.flash')
                             <div class="card-body">
 
-                                @livewire('tblmenu', ['id_lokasi' => $id_lokasi])
+                                {{-- @livewire('tblmenu', ['id_lokasi' => $id_lokasi]) --}}
 
 
-                                {{-- <input type="text" value="{{ request()->get('keyword') }}" placeholder="Cari Menu..."
+                                <input type="text" value="{{ request()->get('keyword') }}" placeholder="Cari Menu..."
                                     class="form-control" id="search_field" name="keyword" autofocus><br>
 
 
                                 <div id="tbl"></div>
                                 <div id="tbl2"></div>
-                                <div id="pagin"></div> --}}
+                                <div id="pagin"></div>
 
 
                             </div>

@@ -74,4 +74,6 @@
 
     </table>
     {{ $menu->links() }}
+
+    
 </div>
