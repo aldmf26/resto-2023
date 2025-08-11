@@ -17,8 +17,8 @@
             </tr>
         </thead>
         <tbody>
-            
-            {{-- @foreach ($menu as $index => $m)
+
+            @foreach ($menu as $index => $m)
                 @php
                     $harga = DB::table('tb_harga')
                         ->select('tb_harga.*', 'tb_distribusi.*')
@@ -83,10 +83,9 @@
                             href="{{ route('deleteMenu', ['id_menu' => $m->id_menu, 'id_lokasi' => $id_lokasi, 'keyword' => $keyword]) }}"
                             class="btn  btn-new" style="background-color: #F7F7F7;"><i style="color: #B0BEC5;"><i
                                     class="fas fa-trash-alt"></i></a>
-
                     </td>
                 </tr>
-            @endforeach --}}
+            @endforeach
         </tbody>
 
     </table>
