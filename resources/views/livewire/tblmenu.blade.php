@@ -1,6 +1,6 @@
 <div>
-    <input type="text" wire:model="keyword" placeholder="Cari Menu..." class="form-control"
-        id="search_field" name="keyword" autofocus><br>
+    <input type="text" wire:model="keyword" placeholder="Cari Menu..." class="form-control" id="search_field"
+        name="keyword" autofocus><br>
 
     <table class="table  ">
         <thead>
@@ -50,11 +50,12 @@
                     </td>
                     <td>
                         <label class="switch float-left">
-                            <input type="checkbox" wire:change="toggleActive({{ $m->id_menu }})" class="form-checkbox1"
-                                {{ $m->aktif == 'on' ? 'checked' : '' }}>
+                            <input type="checkbox" wire:change="toggleActive({{ $m->id_menu }})"
+                                class="form-checkbox1" {{ $m->aktif == 'on' ? 'checked' : '' }}>
                             <span class="slider round"></span>
                         </label>
-                        <input name="monitor" class="swalDefaultSuccess form-password nilai{{ $m->id_menu }} form-control"
+                        <input name="monitor"
+                            class="swalDefaultSuccess form-password nilai{{ $m->id_menu }} form-control"
                             value="{{ $m->aktif }}" hidden>
                     </td>
                     <td style="white-space: nowrap;">
@@ -72,5 +73,5 @@
         </tbody>
 
     </table>
-    {{-- {{ $menu->links() }} --}}
+    {{ $menu->links() }}
 </div>

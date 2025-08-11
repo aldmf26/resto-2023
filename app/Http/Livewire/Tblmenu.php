@@ -20,7 +20,7 @@ class Tblmenu extends Component
             session()->flash('sukses', 'Status menu berhasil diubah!');
         }
     }
-    
+
 
     public function render()
     {
@@ -44,7 +44,7 @@ class Tblmenu extends Component
                 });
             })
             ->orderBy('tb_menu.id_menu', 'DESC')
-            ->get();
+            ->paginate(10);
 
         return view('livewire.tblmenu', [
             'menu' => $menu,
