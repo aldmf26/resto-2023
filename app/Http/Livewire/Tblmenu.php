@@ -26,7 +26,10 @@ class Tblmenu extends Component
             )
             ->where('tb_menu.lokasi', $this->id_lokasi)
             ->when($this->keyword, function ($query) {
-                $query->where('tb_menu.nama', 'like', '%' . $this->keyword . '%');  // Search by keyword
+                $query->where(function ($query) {
+                    $query->where('tb_menu.nm_menu', 'like', '%' . $this->keyword . '%')  // Search by keyword
+                        ->orWhere('tb_menu.kd_menu', 'like', '%' . $this->keyword . '%');  // Search by kd_menu
+                });
             })
             ->orderBy('tb_menu.id_menu', 'DESC')
             ->get();
