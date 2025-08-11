@@ -70,5 +70,5 @@
         </tbody>
 
     </table>
-    {{ $menu->appends(['id_lokasi' => $id_lokasi])->links() }}
+    {{ $menu->links() }}
 </div>
