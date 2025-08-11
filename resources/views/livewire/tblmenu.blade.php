@@ -20,7 +20,7 @@
 
             @foreach ($menu as $index => $m)
                 <tr>
-                    <td>{{ $no++ }}</td>
+                    <td>{{ $loop->iteration }}</td>
                     <td>{{ $m->kategori }}</td>
                     <!--<td></td>-->
                     @if (empty($m->handicapId))
