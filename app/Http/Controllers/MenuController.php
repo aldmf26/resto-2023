@@ -300,46 +300,53 @@ WHERE a.lokasi = '$request->id_lokasi' AND a.nm_menu LIKE '%$keyword%' OR a.kd_m
 
     public function addMenu(Request $request)
     {
-        $menu = Menu::orderBy('kd_menu', 'desc')->where('lokasi', $request->id_lokasi)->first();
+        DB::beginTransaction();
+        try {
+            $menu = Menu::orderBy('kd_menu', 'desc')->where('lokasi', $request->id_lokasi)->first();
 
-        $kd_menu = $menu->kd_menu + 1;
+            $kd_menu = $menu->kd_menu + 1;
 
-        if ($request->hasFile('image')) {
-            $request->file('image')->move('assets/tb_menu/', $request->file('image')->getClientOriginalName());
-            $foto = $request->file('image')->getClientOriginalName();
-        } else {
-            $foto = '';
-        }
+            if ($request->hasFile('image')) {
+                $request->file('image')->move('assets/tb_menu/', $request->file('image')->getClientOriginalName());
+                $foto = $request->file('image')->getClientOriginalName();
+            } else {
+                $foto = '';
+            }
 
-        $data1 = [
+            $data1 = [
 
-            'id_kategori' => $request->id_kategori,
-            'kd_menu' => $kd_menu,
-            'nm_menu' => $request->nm_menu,
-            'id_handicap' => $request->id_handicap,
-            'tipe' => $request->tipe,
-            'id_station' => $request->id_station,
-            'image' => $foto,
-            'lokasi' => $request->id_lokasi,
-            'aktif' => 'on',
+                'id_kategori' => $request->id_kategori,
+                'kd_menu' => $kd_menu,
+                'nm_menu' => $request->nm_menu,
+                'id_handicap' => $request->id_handicap,
+                'tipe' => $request->tipe,
+                'id_station' => $request->id_station,
+                'image' => $foto,
+                'lokasi' => $request->id_lokasi,
+                'aktif' => 'on',
 
-        ];
-
-        $menu = Menu::create($data1);
-        $id_menu = $menu->id;
-        $id_distribusi = $request->id_distribusi;
-        $harga = $request->harga;
-        for ($i = 0; $i < count($request->id_distribusi); $i++) {
-            $data2 = [
-                'id_menu' => $id_menu,
-                'id_distribusi' => $id_distribusi[$i],
-                'harga' => $harga[$i],
             ];
 
-            Harga::create($data2);
-        }
+            $menu = Menu::create($data1);
+            $id_menu = $menu->id;
+            $id_distribusi = $request->id_distribusi;
+            $harga = $request->harga;
+            for ($i = 0; $i < count($request->id_distribusi); $i++) {
+                $data2 = [
+                    'id_menu' => $id_menu,
+                    'id_distribusi' => $id_distribusi[$i],
+                    'harga' => $harga[$i],
+                ];
 
-        return redirect()->route('menu', ['id_lokasi' => $request->id_lokasi, 'keyword' => $request->keywordTambah])->with('sukses', 'Berhasiil tambah Menu');
+                Harga::create($data2);
+            }
+
+            DB::commit();
+            return redirect()->route('menu', ['id_lokasi' => $request->id_lokasi, 'keyword' => $request->keywordTambah])->with('sukses', 'Berhasiil tambah Menu');
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->route('menu', ['id_lokasi' => $request->id_lokasi, 'keyword' => $request->keywordTambah])->with('error', 'Gagal tambah Menu');
+        }
     }
 
     public function deleteMenu(Request $request)

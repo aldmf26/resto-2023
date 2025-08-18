@@ -24,8 +24,8 @@ class Menu extends Model
         'tgl_sold'
     ];
 
-    public function harga()
-    {
-        return $this->hasMany(Harga::class, 'id_menu', 'id_menu');
-    }
+    // public function harga()
+    // {
+    //     return $this->hasMany(Harga::class, 'id_menu', 'id_menu');
+    // }
 }
