@@ -16,8 +16,8 @@ class Harga extends Model
         'id_menu'
     ];
 
-    public function distribusi()
-    {
-        return $this->belongsTo(Distribusi::class, 'id_distribusi', 'id_distribusi');
-    }
+    // public function distribusi()
+    // {
+    //     return $this->belongsTo(Distribusi::class, 'id_distribusi', 'id_distribusi');
+    // }
 }
