@@ -329,7 +329,6 @@ WHERE a.lokasi = '$request->id_lokasi' AND a.nm_menu LIKE '%$keyword%' OR a.kd_m
             ];
 
             $id_menu = DB::table('tb_menu')->insertGetId($data1);
-            dd($id_menu);
             $id_distribusi = $request->id_distribusi;
             $harga = $request->harga;
             for ($i = 0; $i < count($request->id_distribusi); $i++) {
